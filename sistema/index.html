@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Marmoraria Shekina — Sistema</title>
+  <meta name="robots" content="noindex, nofollow">
+  <!-- entrada pelo site: já abre a área restrita (pede login se precisar) -->
+  <script>
+    addEventListener('load', () => {
+      if (location.hash) return;
+      if (usuarioAtual()) location.hash = '#orcamentos';
+      else pedirLogin('orcamentos');
+    });
+  </script>
+  <link rel="icon" href="logo-s.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="logo-s.png" alt="" class="brand-logo"><span data-cfg="nome"></span></div>
+    <nav class="tabs">
+      <a href="#apresentacao" data-tab="apresentacao">Apresentação</a>
+      <a href="#orcamentos" data-tab="orcamentos" data-restrito hidden>Orçamentos</a>
+      <a href="#producao" data-tab="producao" data-restrito hidden>Produção</a>
+      <a href="#financeiro" data-tab="financeiro" data-restrito hidden>Financeiro</a>
+    </nav>
+    <div class="conta" id="conta"></div>
+  </header>
+
+  <main>
+    <!-- ===================== APRESENTAÇÃO ===================== -->
+    <section id="apresentacao" class="view">
+      <div class="hero">
+        <div class="hero-inner">
+        <div class="hero-txt">
+          <p class="eyebrow">Casimiro de Abreu e região · Mármores · Granitos · Quartzos</p>
+          <h1>Pedras nobres sob medida para o seu projeto</h1>
+          <p class="lead" data-cfg="slogan"></p>
+          <div class="hero-cta">
+            <a class="btn btn-gold" data-whatsapp target="_blank" rel="noopener">Solicitar orçamento pelo WhatsApp</a>
+            <button class="btn btn-ghost" data-scroll="materiais">Ver materiais</button>
+          </div>
+        </div>
+        <img class="hero-logo" src="logo.jpg" alt="Marmoraria Shekina">
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="diferenciais">
+          <div><strong>Medição gratuita</strong><span>Visita técnica no local da obra</span></div>
+          <div><strong>Corte de precisão</strong><span>Acabamento fino em todas as peças</span></div>
+          <div><strong>Instalação própria</strong><span>Equipe treinada e de confiança</span></div>
+          <div><strong>Garantia</strong><span>Compromisso com prazo e qualidade</span></div>
+        </div>
+
+        <h2 class="sec-title">Serviços</h2>
+        <div class="cards">
+          <article class="card"><h3>Cozinhas</h3><p>Bancadas, ilhas, frontões e cubas esculpidas sob medida.</p></article>
+          <article class="card"><h3>Banheiros</h3><p>Lavatórios, nichos, saias e cubas integradas.</p></article>
+          <article class="card"><h3>Escadas e pisos</h3><p>Degraus, espelhos, rodapés e pisos em pedra natural.</p></article>
+          <article class="card"><h3>Soleiras e peitoris</h3><p>Acabamentos para portas e janelas com caimento correto.</p></article>
+          <article class="card"><h3>Áreas gourmet</h3><p>Bancadas externas, churrasqueiras e mesas.</p></article>
+          <article class="card"><h3>Projetos especiais</h3><p>Lareiras, revestimentos de parede e peças personalizadas.</p></article>
+        </div>
+
+        <h2 class="sec-title" id="materiais">Catálogo de pedras</h2>
+        <p class="sec-sub">As pedras mais procuradas para cozinhas, banheiros, escadas e áreas gourmet. Imagens ilustrativas: cada chapa de pedra natural é única — venha conhecer as chapas disponíveis.</p>
+        <div class="chips" id="cat-filtros"></div>
+        <p class="cat-info" id="cat-info"></p>
+        <div class="catalogo" id="catalogo"></div>
+
+        <h2 class="sec-title">Como funciona</h2>
+        <ol class="passos">
+          <li><strong>Contato</strong><span>Você nos chama e conta o que precisa.</span></li>
+          <li><strong>Medição</strong><span>Vamos até a obra e tiramos as medidas.</span></li>
+          <li><strong>Orçamento</strong><span>Enviamos o orçamento detalhado por peça.</span></li>
+          <li><strong>Produção</strong><span>Cortamos e acabamos as peças na marmoraria.</span></li>
+          <li><strong>Instalação</strong><span>Entregamos e instalamos no prazo combinado.</span></li>
+        </ol>
+
+        <h2 class="sec-title">Contato</h2>
+        <div class="contato">
+          <div><span>WhatsApp</span><div id="lista-whats" class="lista-whats"></div></div>
+          <div id="contato-email"><span>E-mail</span><strong data-cfg="email"></strong></div>
+          <div><span>Endereço</span><strong data-cfg="endereco"></strong></div>
+          <a class="btn btn-gold" data-whatsapp target="_blank" rel="noopener">Falar no WhatsApp</a>
+        </div>
+      </div>
+      <footer class="rodape"><span data-cfg="nome"></span> · <span data-cfg="cnpj"></span> · <span data-cfg="ie"></span><br><span data-cfg="endereco"></span></footer>
+    </section>
+
+    <!-- ===================== ORÇAMENTOS ===================== -->
+    <section id="orcamentos" class="view wrap" hidden>
+      <div class="page-head">
+        <h2>Orçamentos</h2>
+        <div class="head-acoes">
+          <button class="btn btn-ghost-dark" id="btn-precos">Tabela de preços</button>
+          <button class="btn btn-gold" id="btn-novo">+ Novo orçamento</button>
+        </div>
+      </div>
+
+      <div class="kpis" id="orc-kpis"></div>
+
+      <div class="toolbar">
+        <input type="search" id="busca" placeholder="Buscar por cliente ou nº">
+        <select id="filtro-status">
+          <option value="">Todos os status</option>
+          <option value="pendente">Em aberto</option>
+          <option value="vendido">Vendidos</option>
+          <option value="recusado">Recusados</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="tabela">
+          <thead><tr><th>Nº</th><th>Cliente</th><th>Data</th><th>Validade</th><th class="num">Valor</th><th>Status</th><th></th></tr></thead>
+          <tbody id="orc-body"></tbody>
+        </table>
+      </div>
+
+      <div class="backup">
+        <button class="btn btn-ghost-dark" id="btn-exportar">Exportar backup</button>
+        <label class="btn btn-ghost-dark">Importar backup<input type="file" id="inp-importar" accept=".json" hidden></label>
+      </div>
+    </section>
+
+    <!-- ===================== PRODUÇÃO ===================== -->
+    <section id="producao" class="view wrap wrap-largo" hidden>
+      <div class="page-head">
+        <h2>Produção <small>— obras vendidas</small></h2>
+        <label class="check"><input type="checkbox" id="prod-instaladas"> Mostrar obras instaladas</label>
+      </div>
+      <div class="kanban" id="kanban"></div>
+    </section>
+
+    <!-- ===================== FINANCEIRO ===================== -->
+    <section id="financeiro" class="view wrap" hidden>
+      <div class="page-head">
+        <h2>Financeiro <small>— apenas obras vendidas</small></h2>
+        <div class="periodo">
+          <label>Período <input type="month" id="fin-mes"></label>
+          <button class="btn-sm" id="fin-limpar">Todo o período</button>
+        </div>
+      </div>
+
+      <div class="kpis" id="fin-kpis"></div>
+
+      <h3 class="sub-title">Obras vendidas</h3>
+      <div class="table-wrap">
+        <table class="tabela">
+          <thead><tr><th>Nº</th><th>Cliente</th><th>Venda</th><th>Entrega</th><th class="num">Valor</th><th class="num">Recebido</th><th class="num">Saldo</th><th>Obra</th><th></th></tr></thead>
+          <tbody id="fin-body"></tbody>
+        </table>
+      </div>
+
+      <h3 class="sub-title">Parcelas a receber</h3>
+      <div class="table-wrap">
+        <table class="tabela">
+          <thead><tr><th>Vencimento</th><th>Cliente</th><th>Parcela</th><th class="num">Valor</th><th></th></tr></thead>
+          <tbody id="receber-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== DIALOG: ORÇAMENTO ===================== -->
+  <dialog id="dlg-orc" class="dlg dlg-lg">
+    <form id="form-orc">
+      <header class="dlg-head"><h3 id="orc-titulo">Novo orçamento</h3><button type="button" class="x" data-fechar>×</button></header>
+      <div class="dlg-body">
+        <fieldset>
+          <legend>Cliente</legend>
+          <div class="grid4">
+            <label class="span2">Nome *<input id="c-nome" required></label>
+            <label>Telefone<input id="c-telefone"></label>
+            <label>E-mail<input id="c-email" type="email"></label>
+          </div>
+          <div class="end-titulo"><strong>Endereço da obra</strong>
+            <button type="button" class="btn-sm btn-mapa" id="btn-mapa" title="Abre o endereço no Google Maps">📍 Abrir no mapa</button>
+            <small id="end-msg"></small></div>
+          <div class="grid4 end-grid">
+            <label>CEP<input id="e-cep" inputmode="numeric" maxlength="9" placeholder="28860-000"></label>
+            <label class="span2">Rua / Estrada<input id="e-rua" placeholder="Ex.: Rua das Palmeiras"></label>
+            <label>Número<input id="e-numero" placeholder="Ex.: 120 ou s/n"></label>
+            <label>Complemento<input id="e-complemento" placeholder="Casa, apto, lote, quadra…"></label>
+            <label>Bairro<input id="e-bairro"></label>
+            <label>Cidade<input id="e-cidade" placeholder="Casimiro de Abreu"></label>
+            <label>UF<input id="e-uf" maxlength="2" placeholder="RJ"></label>
+            <label class="span2">Ponto de referência<input id="e-referencia" placeholder="Ex.: em frente à padaria, portão azul"></label>
+            <label class="span2">Localização (link do Google Maps ou WhatsApp, opcional)<input id="e-link" placeholder="Cole aqui o link da localização enviada pelo cliente"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Peças e serviços</legend>
+          <p class="dica">O preço por m² vem da tabela ao escolher o material. Em Acabamento (Boleado, Meia esquadria) marque os lados — frente e fundo usam o comprimento, laterais a largura — e os metros são calculados sozinhos. Tudo pode ser alterado em cada item.</p>
+          <div class="table-wrap">
+            <table class="tabela itens">
+              <thead><tr><th title="Quantidade de peças com o mesmo tamanho">Qtd.</th><th>Descrição</th><th>Material</th><th>Cobrança</th><th>Compr. (m)</th><th>Larg. (m)</th><th>Acabamento</th><th>Cuba</th><th>Preço unit.</th><th class="num">Medida</th><th class="num">Total</th><th></th></tr></thead>
+              <tbody id="itens-body"></tbody>
+            </table>
+          </div>
+          <button type="button" class="btn-sm" id="btn-add-item">+ Adicionar item</button>        </fieldset>
+
+        <fieldset>
+          <legend>Condições</legend>
+          <div class="grid4">
+            <label>Data<input id="o-data" type="date" required></label>
+            <label>Válido até<input id="o-validade" type="date"></label>
+            <label>Prazo de entrega<input id="o-prazo" placeholder="ex.: 15 dias úteis"></label>
+            <label>Desconto (R$)<input id="o-desconto" type="number" min="0" step="0.01"></label>
+            <label class="span4">Observações<textarea id="o-obs" rows="2" placeholder="Ex.: não inclui retirada de pedra antiga"></textarea></label>
+          </div>
+        </fieldset>
+      </div>
+      <footer class="dlg-foot">
+        <div class="totais">Subtotal <strong id="t-sub"></strong> · Desconto <strong id="t-desc"></strong> · Total <strong class="t-total" id="t-total"></strong></div>
+        <div><button type="button" class="btn btn-ghost-dark" data-fechar>Cancelar</button><button class="btn btn-gold">Salvar orçamento</button></div>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- ===================== DIALOG: TABELA DE PREÇOS ===================== -->
+  <!-- ===================== ACESSO RESTRITO ===================== -->
+  <dialog id="dlg-login" class="dlg dlg-sm">
+    <form id="form-login">
+      <header class="dlg-head"><h3 id="login-titulo">Área restrita</h3><button type="button" class="x" data-fechar>×</button></header>
+      <div class="dlg-body">
+        <p class="dica" id="login-dica">Orçamentos, Produção e Financeiro são apenas para pessoas autorizadas.</p>
+        <label>Usuário<input id="login-nome" autocomplete="username" required></label>
+        <label>Senha<input id="login-senha" type="password" autocomplete="current-password" required></label>
+        <label id="login-conf-wrap" hidden>Repita a senha<input id="login-conf" type="password" autocomplete="new-password"></label>
+        <p class="login-erro" id="login-erro"></p>
+      </div>
+      <footer class="dlg-foot"><span></span>
+        <div><button type="button" class="btn btn-ghost-dark" data-fechar>Cancelar</button><button class="btn btn-gold" id="login-btn">Entrar</button></div>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-usuarios" class="dlg dlg-sm">
+    <div>
+      <header class="dlg-head"><h3>Usuários autorizados</h3><button type="button" class="x" data-fechar>×</button></header>
+      <div class="dlg-body">
+        <ul class="lista-usuarios" id="lista-usuarios"></ul>
+        <fieldset>
+          <legend>Novo usuário</legend>
+          <form id="form-novo-usuario" class="grid2">
+            <label>Nome de usuário<input id="nu-nome" required autocomplete="off"></label>
+            <label>Senha (mín. 6)<input id="nu-senha" type="password" minlength="6" required autocomplete="new-password"></label>
+            <label class="chk"><input type="checkbox" id="nu-admin"> Pode gerenciar usuários</label>
+            <div><button class="btn-sm btn-ok">+ Adicionar usuário</button></div>
+          </form>
+        </fieldset>
+        <fieldset>
+          <legend>Trocar minha senha</legend>
+          <form id="form-trocar-senha" class="grid2">
+            <label>Senha atual<input id="ts-atual" type="password" required autocomplete="current-password"></label>
+            <label>Nova senha (mín. 6)<input id="ts-nova" type="password" minlength="6" required autocomplete="new-password"></label>
+            <div><button class="btn-sm">Trocar senha</button></div>
+          </form>
+        </fieldset>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="dlg-precos" class="dlg">
+    <form id="form-precos">
+      <header class="dlg-head"><h3>Tabela de preços</h3><button type="button" class="x" data-fechar>×</button></header>
+      <div class="dlg-body">
+        <p class="dica">Esses valores entram automaticamente nos orçamentos. Alterações aqui valem para os próximos itens — orçamentos já feitos continuam com o preço que tinham.</p>
+        <div class="table-wrap">
+          <table class="tabela itens precos">
+            <thead><tr><th>Material / acabamento</th><th>Cobrança</th><th>Preço (R$)</th><th></th></tr></thead>
+            <tbody id="precos-body"></tbody>
+          </table>
+        </div>
+        <button type="button" class="btn-sm" id="btn-add-preco">+ Adicionar</button>
+      </div>
+      <footer class="dlg-foot">
+        <span></span>
+        <div><button type="button" class="btn btn-ghost-dark" data-fechar>Cancelar</button><button class="btn btn-gold">Salvar preços</button></div>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- ===================== DIALOG: CONFIRMAR VENDA ===================== -->
+  <dialog id="dlg-venda" class="dlg">
+    <form id="form-venda">
+      <header class="dlg-head"><h3>Confirmar venda</h3><button type="button" class="x" data-fechar>×</button></header>
+      <div class="dlg-body">
+        <div class="resumo-venda" id="venda-resumo"></div>
+        <div class="grid2">
+          <label>Data da venda<input id="v-data" type="date" required></label>
+          <label>Forma de pagamento
+            <select id="v-forma">
+              <option>PIX</option><option>Dinheiro</option><option>Cartão de crédito</option>
+              <option>Cartão de débito</option><option>Boleto</option><option>Transferência</option><option>Cheque</option>
+            </select>
+          </label>
+          <label>Entrada (R$)
+            <span class="inline"><input id="v-entrada" type="number" min="0" step="0.01"><button type="button" class="btn-sm" id="v-avista">À vista</button></span>
+          </label>
+          <label class="check"><input type="checkbox" id="v-entrada-paga" checked> Entrada já recebida</label>
+          <label>Parcelas do saldo<input id="v-parcelas" type="number" min="0" max="48" step="1"></label>
+          <label>1º vencimento<input id="v-venc" type="date"></label>
+          <label class="span2">Previsão de entrega/instalação<input id="v-entrega" type="date"></label>
+        </div>
+        <div class="preview-parcelas" id="v-preview"></div>
+        <label class="check confirmacao"><input type="checkbox" id="v-ok" required> Confirmo que o cliente aprovou este orçamento e a venda foi fechada. A obra será enviada ao Financeiro.</label>
+      </div>
+      <footer class="dlg-foot">
+        <span class="erro" id="v-erro"></span>
+        <div><button type="button" class="btn btn-ghost-dark" data-fechar>Cancelar</button><button class="btn btn-ok">Confirmar venda</button></div>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- ===================== DIALOG: OBRA (FINANCEIRO) ===================== -->
+  <dialog id="dlg-obra" class="dlg">
+    <header class="dlg-head"><h3 id="obra-titulo"></h3><button type="button" class="x" data-fechar>×</button></header>
+    <div class="dlg-body" id="obra-body"></div>
+    <footer class="dlg-foot">
+      <button type="button" class="btn btn-danger" id="btn-cancelar-venda">Cancelar venda</button>
+      <button type="button" class="btn btn-ghost-dark" data-fechar>Fechar</button>
+    </footer>
+  </dialog>
+
+  <!-- ===================== DIALOG: DESENHO TÉCNICO ===================== -->
+  <dialog id="dlg-desenho" class="dlg dlg-full">
+    <header class="dlg-head">
+      <h3 id="des-titulo"></h3>
+      <div class="des-topo">
+        <button type="button" class="btn-sm btn-3d" id="des-3d">Ver em 3D</button>
+        <button type="button" class="btn-sm" id="des-png">Baixar imagem (WhatsApp)</button>
+        <button type="button" class="btn-sm btn-ok" id="des-imprimir">Imprimir ordem de produção</button>
+        <button type="button" class="x" data-fechar>×</button>
+      </div>
+    </header>
+    <div class="des-layout">
+      <aside class="des-ferramentas" id="des-ferramentas">
+        <button data-ferr="mover" title="Mover / editar medidas">✥<span>Mover</span></button>
+        <button data-ferr="peca" title="Peça retangular">▭<span>Peça</span></button>
+        <button data-ferr="recorte" title="Recorte de cuba, cooktop...">⬚<span>Recorte</span></button>
+        <button data-ferr="linha" title="Linha">╱<span>Linha</span></button>
+        <button data-ferr="cota" title="Cota de medida">↔<span>Cota</span></button>
+        <button data-ferr="circulo" title="Furo / círculo">◯<span>Furo</span></button>
+        <button data-ferr="texto" title="Texto">T<span>Texto</span></button>
+        <button data-ferr="livre" title="Lápis (mão livre)">✎<span>Lápis</span></button>
+        <button data-ferr="borracha" title="Apagar forma">⌫<span>Apagar</span></button>
+        <button data-ferr="borda" title="Acabamento na borda da peça">▬<span>Borda</span></button>
+        <select id="des-borda-tipo" class="des-borda-tipo" title="Acabamento usado pela ferramenta Borda"></select>
+        <label class="des-saia" id="des-saia-wrap" title="Altura da saia da meia esquadria">Saia (cm)
+          <input type="number" id="des-saia" value="4" min="1" step="0.5"></label>
+        <button data-ferr="espelho" title="Espelho (frontão) na parede, no lado da peça">▤<span>Espelho</span></button>
+        <label class="des-saia" title="Altura do espelho">Altura (cm)
+          <input type="number" id="des-espelho-alt" value="10" min="1" step="0.5"></label>
+        <button data-ferr="pedra" title="Aplicar a pedra escolhida na peça">◩<span>Pintar pedra</span></button>
+        <hr>
+        <button data-cmd="desfazer" title="Desfazer (Ctrl+Z)">↶<span>Desfazer</span></button>
+        <button data-cmd="gerar" title="Criar peças a partir do orçamento">⚡<span>Peças do orçamento</span></button>
+        <button data-cmd="limpar" title="Limpar folha">🗑<span>Limpar</span></button>
+        <label class="des-snap" title="Encaixar na grade a cada 5 cm"><input type="checkbox" id="des-snap" checked> Grade 5cm</label>
+      </aside>
+      <div class="des-area">
+        <div class="des-barra">
+          <div class="des-folhas" id="des-folhas"></div>
+          <label class="des-pedra" title="Pedra das peças novas e da ferramenta Pintar pedra">
+            <span class="des-pedra-cor" id="des-pedra-cor"></span>Pedra
+            <select id="des-pedra"></select>
+          </label>
+        </div>
+        <div class="des-canvas"><svg id="des-svg" xmlns="http://www.w3.org/2000/svg" font-family="Arial, Helvetica, sans-serif"></svg></div>
+        <div class="des-status" id="des-status"></div>
+      </div>
+      <aside class="des-lateral">
+        <h4>Peças do orçamento</h4>
+        <ul class="des-pecas" id="des-pecas"></ul>
+        <h4>Observações para produção</h4>
+        <textarea id="des-obs" rows="4" placeholder="Ex.: borda meia-esquadria na frente, saia de 4 cm, furo de torneira à direita, conferir nível da parede..."></textarea>
+        <h4>Fotos / croquis</h4>
+        <label class="btn-sm des-add-foto">+ Adicionar foto<input type="file" id="des-foto" accept="image/*" multiple hidden></label>
+        <div class="des-fotos" id="des-fotos"></div>
+      </aside>
+    </div>
+  </dialog>
+
+  <!-- ===================== DIALOG: VISUALIZAÇÃO 3D ===================== -->
+  <dialog id="dlg-3d" class="dlg dlg-full">
+    <header class="dlg-head">
+      <h3 id="v3d-titulo">Visualização 3D</h3>
+      <div class="des-topo">
+        <label class="inline-lbl">Espessura da pedra
+          <select id="v3d-esp"><option value="2">2 cm</option><option value="3">3 cm</option></select>
+        </label>
+        <label class="check"><input type="checkbox" id="v3d-girar"> Girar</label>
+        <button type="button" class="btn-sm" id="v3d-reset">Centralizar</button>
+        <button type="button" class="btn-sm" id="v3d-foto">Baixar imagem</button>
+        <button type="button" class="x" data-fechar>×</button>
+      </div>
+    </header>
+    <div class="v3d-area" id="v3d-area">
+      <p class="v3d-dica">Arraste para girar · roda do mouse para aproximar · botão direito para arrastar</p>
+    </div>
+  </dialog>
+
+  <div id="toast"></div>
+  <div id="print-area"></div>
+
+  <datalist id="dl-descricoes">
+    <option>Bancada de cozinha</option><option>Bancada de banheiro</option><option>Ilha</option>
+    <option>Frontão / rodabanca</option><option>Saia</option><option>Soleira</option><option>Peitoril</option>
+    <option>Degrau de escada</option><option>Espelho de escada</option><option>Cuba esculpida</option>
+    <option>Recorte de cuba</option><option>Recorte de cooktop</option><option>Mesa</option>
+    <option>Churrasqueira</option><option>Nicho</option><option>Instalação</option><option>Frete</option>
+  </datalist>
+  <datalist id="dl-materiais"></datalist>
+
+  <script src="acesso.js"></script>
+  <script src="catalogo.js"></script>
+  <script src="app.js"></script>
+  <script src="producao.js"></script>
+  <script src="v3d.js"></script>
+</body>
+</html>
