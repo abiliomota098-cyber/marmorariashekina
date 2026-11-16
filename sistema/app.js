@@ -5,7 +5,7 @@ const CONFIG = {
   nome: 'Marmoraria Shekina',
   slogan: 'Mármores, granitos e quartzos sob medida para a sua casa, com medição, produção e instalação.',
   // o primeiro número é usado nos botões "Solicitar orçamento"
-  telefones: ['(22) 99702-9011', '(22) 99213-9181', '(22) 98137-7416'],
+  telefones: ['(22) 99702-9011', '(22) 99213-9181'],
   email: '', // deixe vazio para não exibir
   endereco: 'BR-101, km 206, nº 925 — Condomínio Industrial — Casimiro de Abreu/RJ',
   cnpj: 'CNPJ 05.422.151/0001-51',
