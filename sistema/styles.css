@@ -413,6 +413,8 @@ select.status-obra { padding: 4px 8px; border: 1px solid var(--pedra-200); borde
   #print-area .num { text-align: right; }
   .pr-total { text-align: right; font-size: 14px; }
   .pr-total strong { font-size: 18px; }
+  .pr-total .pr-avista { margin-top: -6px; color: #2f7d4f; }
+  .pr-total .pr-avista strong { font-size: 16px; }
   .pr-obs { border: 1px solid #999; padding: 8px; margin-bottom: 12px; }
   .pr-folha { page-break-inside: avoid; break-inside: avoid; margin-bottom: 14px; }
   .pr-folha h3 { font-size: 14px; margin-bottom: 6px; }

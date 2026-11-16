@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
@@ -17,7 +17,7 @@
     });
   </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <header class="topbar">
@@ -213,12 +213,13 @@
             <label>Válido até<input id="o-validade" type="date"></label>
             <label>Prazo de entrega<input id="o-prazo" placeholder="ex.: 15 dias úteis"></label>
             <label>Desconto (R$)<input id="o-desconto" type="number" min="0" step="0.01"></label>
+            <label title="Desconto oferecido se o cliente pagar tudo à vista. Aparece no orçamento impresso junto do valor normal.">Desconto à vista (%)<input id="o-desc-avista" type="number" min="0" max="100" step="0.5" placeholder="ex.: 5"></label>
             <label class="span4">Observações<textarea id="o-obs" rows="2" placeholder="Ex.: não inclui retirada de pedra antiga"></textarea></label>
           </div>
         </fieldset>
       </div>
       <footer class="dlg-foot">
-        <div class="totais">Subtotal <strong id="t-sub"></strong> · Desconto <strong id="t-desc"></strong> · Total <strong class="t-total" id="t-total"></strong></div>
+        <div class="totais">Subtotal <strong id="t-sub"></strong> · Desconto <strong id="t-desc"></strong> · Total <strong class="t-total" id="t-total"></strong><span id="t-avista-wrap" hidden> · À vista <strong class="t-total" id="t-avista"></strong></span></div>
         <div><button type="button" class="btn btn-ghost-dark" data-fechar>Cancelar</button><button class="btn btn-gold">Salvar orçamento</button></div>
       </footer>
     </form>
@@ -303,6 +304,7 @@
           <label>Entrada (R$)
             <span class="inline"><input id="v-entrada" type="number" min="0" step="0.01"><button type="button" class="btn-sm" id="v-avista">À vista</button></span>
           </label>
+          <label class="check span2" id="v-avista-desc-wrap" hidden><input type="checkbox" id="v-avista-desc"> <span id="v-avista-desc-txt"></span></label>
           <label class="check"><input type="checkbox" id="v-entrada-paga" checked> Entrada já recebida</label>
           <label>Parcelas do saldo<input id="v-parcelas" type="number" min="0" max="48" step="1"></label>
           <label>1º vencimento<input id="v-venc" type="date"></label>
@@ -420,11 +422,11 @@
 
   <script src="vendor/supabase.js"></script>
   <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
-  <script src="avisos.js?v=4"></script>
-  <script src="acesso.js?v=4"></script>
-  <script src="catalogo.js?v=4"></script>
-  <script src="app.js?v=4"></script>
-  <script src="producao.js?v=4"></script>
-  <script src="v3d.js?v=4"></script>
+  <script src="avisos.js?v=5"></script>
+  <script src="acesso.js?v=5"></script>
+  <script src="catalogo.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+  <script src="producao.js?v=5"></script>
+  <script src="v3d.js?v=5"></script>
 </body>
 </html>

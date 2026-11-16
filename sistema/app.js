@@ -151,6 +151,10 @@ const ehEsquadria = nome => /esquadria/i.test(nome || '');
 const acabTexto = it => `${it.acabamento}${ladosTexto(it)}${ehEsquadria(it.acabamento) ? ` — saia ${String(+it.acabSaia || 4).replace('.', ',')} cm` : ''}`;
 const subtotal = o => round2(o.itens.reduce((s, it) => s + totalItem(it), 0));
 const totalOrc = o => Math.max(0, round2(subtotal(o) - (+o.desconto || 0)));
+// valor para pagamento à vista, com o "Desconto à vista (%)" do orçamento
+const pctAvista = o => Math.min(100, Math.max(0, +o.descAvista || 0));
+const totalAvista = o => round2(totalOrc(o) * (1 - pctAvista(o) / 100));
+const fmtPct = v => String(+v).replace('.', ',') + '%';
 const recebido = o => round2(o.venda.parcelas.filter(p => p.pago).reduce((s, p) => s + p.valor, 0));
 
 // ============================================================
@@ -341,6 +345,7 @@ function abrirOrcamento(o) {
   $('#o-validade').value = editando.validade;
   $('#o-prazo').value = editando.prazoEntrega;
   $('#o-desconto').value = editando.desconto || '';
+  $('#o-desc-avista').value = editando.descAvista || '';
   $('#o-obs').value = editando.observacoes;
   renderItens();
   $('#dlg-orc').showModal();
@@ -414,6 +419,8 @@ function atualizarTotais() {
   $('#t-sub').textContent = fmt(subtotal(editando));
   $('#t-desc').textContent = fmt(+editando.desconto || 0);
   $('#t-total').textContent = fmt(totalOrc(editando));
+  $('#t-avista-wrap').hidden = !pctAvista(editando);
+  $('#t-avista').textContent = `${fmt(totalAvista(editando))} (−${fmtPct(pctAvista(editando))})`;
 }
 
 $('#itens-body').addEventListener('input', e => {
@@ -498,6 +505,7 @@ $('#btn-add-item').addEventListener('click', () => {
   $$('#itens-body tr').at(-1).querySelector('[data-f="descricao"]').focus();
 });
 $('#o-desconto').addEventListener('input', e => { editando.desconto = +e.target.value || 0; atualizarTotais(); });
+$('#o-desc-avista').addEventListener('input', e => { editando.descAvista = +e.target.value || 0; atualizarTotais(); });
 
 // ---------- endereço da obra (detalhado) + mapa ----------
 const CAMPOS_END = ['cep', 'rua', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'referencia', 'link'];
@@ -559,7 +567,7 @@ $('#form-orc').addEventListener('submit', e => {
   editando.cliente.endereco = enderecoTexto(editando.cliente.end);
   Object.assign(editando, {
     data: $('#o-data').value, validade: $('#o-validade').value, prazoEntrega: $('#o-prazo').value.trim(),
-    desconto: +$('#o-desconto').value || 0, observacoes: $('#o-obs').value.trim(),
+    desconto: +$('#o-desconto').value || 0, descAvista: +$('#o-desc-avista').value || 0, observacoes: $('#o-obs').value.trim(),
   });
   editando.itens = editando.itens.filter(it => it.descricao.trim() || totalItem(it) > 0);
   if (!editando.itens.length || subtotal(editando) <= 0) {
@@ -575,6 +583,7 @@ $('#form-orc').addEventListener('submit', e => {
     return;
   }
   if (editando.desconto > subtotal(editando)) { avisar('O desconto não pode ser maior que o subtotal.', { titulo: 'Desconto inválido' }); return; }
+  if (editando.descAvista < 0 || editando.descAvista >= 100) { avisar('Use um valor entre 0 e 99%.', { titulo: 'Desconto à vista inválido' }); return; }
 
   if (editando.id) {
     const i = db.orcamentos.findIndex(o => o.id === editando.id);
@@ -652,11 +661,21 @@ function atualizarSugestoes() {
 // ============================================================
 let vendendo = null;
 
+// total da venda: com o desconto à vista se essa opção estiver marcada
+const totalVenda = () => ($('#v-avista-desc').checked ? totalAvista(vendendo) : totalOrc(vendendo));
+function resumoVenda() {
+  const o = vendendo, avista = $('#v-avista-desc').checked;
+  $('#venda-resumo').innerHTML = `<div>Orçamento #${o.numero}<br><strong>${esc(o.cliente.nome)}</strong></div>
+    <div style="text-align:right">Valor total${avista ? ` à vista (−${fmtPct(pctAvista(o))})` : ''}<br><strong>${fmt(totalVenda())}</strong>${avista ? `<br><small><s>${fmt(totalOrc(o))}</s></small>` : ''}</div>`;
+}
+
 function abrirVenda(o) {
   vendendo = o;
   const total = totalOrc(o);
-  $('#venda-resumo').innerHTML = `<div>Orçamento #${o.numero}<br><strong>${esc(o.cliente.nome)}</strong></div>
-    <div style="text-align:right">Valor total<br><strong>${fmt(total)}</strong></div>`;
+  $('#v-avista-desc-wrap').hidden = !pctAvista(o);
+  $('#v-avista-desc').checked = false;
+  $('#v-avista-desc-txt').textContent = `Pagamento à vista com ${fmtPct(pctAvista(o))} de desconto — ${fmt(totalAvista(o))}`;
+  resumoVenda();
   $('#v-data').value = hoje();
   $('#v-forma').value = 'PIX';
   $('#v-entrada').value = round2(total / 2);
@@ -687,7 +706,7 @@ function gerarParcelas(total, entrada, n, primeiroVenc, dataVenda, entradaPaga) 
 }
 
 function lerVenda() {
-  const total = totalOrc(vendendo);
+  const total = totalVenda();
   const entrada = round2(+$('#v-entrada').value || 0);
   const n = Math.max(0, Math.floor(+$('#v-parcelas').value || 0));
   const dataVenda = $('#v-data').value;
@@ -709,7 +728,15 @@ function previewVenda() {
 }
 
 $('#form-venda').addEventListener('input', previewVenda);
-$('#v-avista').addEventListener('click', () => { $('#v-entrada').value = totalOrc(vendendo); previewVenda(); });
+$('#v-avista').addEventListener('click', () => {
+  if (pctAvista(vendendo)) $('#v-avista-desc').checked = true;
+  $('#v-entrada').value = totalVenda(); resumoVenda(); previewVenda();
+});
+// marcar/desmarcar o desconto à vista: entrada = valor à vista; desmarcar volta para metade
+$('#v-avista-desc').addEventListener('change', e => {
+  $('#v-entrada').value = e.target.checked ? totalAvista(vendendo) : round2(totalOrc(vendendo) / 2);
+  resumoVenda(); previewVenda();
+});
 
 $('#form-venda').addEventListener('submit', e => {
   e.preventDefault();
@@ -718,7 +745,7 @@ $('#form-venda').addEventListener('submit', e => {
   vendendo.status = 'vendido';
   vendendo.venda = {
     data: v.dataVenda,
-    formaPagamento: $('#v-forma').value,
+    formaPagamento: $('#v-forma').value + ($('#v-avista-desc').checked ? ` (à vista −${fmtPct(pctAvista(vendendo))})` : ''),
     previsaoEntrega: $('#v-entrega').value,
     statusObra: 'desenho',
     valorTotal: v.total,
@@ -901,6 +928,7 @@ function imprimirOrcamento(o) {
     <div class="pr-total">
       ${o.desconto ? `<p>Subtotal: ${fmt(subtotal(o))}<br>Desconto: − ${fmt(o.desconto)}</p>` : ''}
       <p>Total: <strong>${fmt(total)}</strong></p>
+      ${o.status !== 'vendido' && pctAvista(o) ? `<p class="pr-avista">À vista (${fmtPct(pctAvista(o))} de desconto): <strong>${fmt(totalAvista(o))}</strong></p>` : ''}
     </div>
     ${o.prazoEntrega ? `<p><strong>Prazo de entrega:</strong> ${esc(o.prazoEntrega)}</p>` : ''}
     ${o.observacoes ? `<p><strong>Observações:</strong> ${esc(o.observacoes)}</p>` : ''}
