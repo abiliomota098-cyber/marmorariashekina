@@ -12,7 +12,8 @@ const CONFIG = {
   ie: 'Insc. Estadual 77.488.901',
   validadePadraoDias: 15,
   // busca usada no botão "Buscar no mapa" do Contato
-  mapa: 'Marmoraria Shekina, BR-101 km 206, Casimiro de Abreu - RJ',
+  // (código de localização do Google = ponto exato da marmoraria)
+  mapa: 'GRF3+PG Casimiro de Abreu, RJ',
 };
 
 // Tabela de preços inicial. Depois de aberta, os preços são alterados pelo sistema

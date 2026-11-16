@@ -12,7 +12,8 @@ const CONFIG = {
   cnpj: 'CNPJ 05.422.151/0001-51',
   ie: 'Insc. Estadual 77.488.901',
   // busca usada no botão "Como chegar"
-  mapa: 'Marmoraria Shekina, BR-101 km 206, Casimiro de Abreu - RJ',
+  // (código de localização do Google = ponto exato da marmoraria)
+  mapa: 'GRF3+PG Casimiro de Abreu, RJ',
 };
 
 const $ = s => document.querySelector(s);
