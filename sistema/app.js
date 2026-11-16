@@ -978,6 +978,28 @@ $$('[data-scroll]').forEach(b => b.addEventListener('click', () => document.getE
 window.addEventListener('hashchange', mostrarAba);
 aplicarConfig();
 
+// ---------- atualização automática ----------
+// O publicar.ps1 grava versao.json a cada publicação. Se o servidor tem uma versão mais nova
+// do que a aberta, recarrega a página sozinho (sem precisar de Ctrl+F5) — mas só quando
+// ninguém está no meio de uma edição (janela aberta ou dados ainda sendo salvos).
+async function verificarVersao() {
+  if (!window.VERSAO_SISTEMA || VERSAO_SISTEMA === 'dev') return;
+  let atual;
+  try { atual = (await (await fetch('versao.json', { cache: 'no-store' })).json()).v; } catch { return; }
+  if (!atual || atual === VERSAO_SISTEMA) return;
+  const ocupado = document.querySelector('dialog[open]') || (typeof pendente !== 'undefined' && (pendente || salvando));
+  if (ocupado) return; // tenta de novo na próxima verificação
+  // evita recarregar em círculo se o navegador insistir na versão antiga
+  let tentou = null;
+  try { tentou = sessionStorage.getItem('marmoraria.recarregou'); } catch {}
+  if (tentou === atual) return;
+  try { sessionStorage.setItem('marmoraria.recarregou', atual); } catch {}
+  location.reload();
+}
+verificarVersao();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) verificarVersao(); });
+setInterval(verificarVersao, 5 * 60 * 1000);
+
 // modo claro/escuro (o tema inicial é aplicado no <head> do index.html)
 function mostrarBotaoTema() {
   const escuro = document.documentElement.dataset.tema === 'escuro';
