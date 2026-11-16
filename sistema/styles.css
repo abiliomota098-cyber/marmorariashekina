@@ -430,6 +430,8 @@ select.status-obra { padding: 4px 8px; border: 1px solid var(--pedra-200); borde
 .end-titulo small { color: #777; }
 .btn-mapa { font-weight: 600; }
 .link-mapa { display: inline-block; margin-left: 6px; color: var(--ouro-escuro); font-weight: 600; text-decoration: none; }
+.contato .link-mapa { display: inline-block; margin: 8px 0 0; padding: 5px 12px; border: 1px solid var(--ouro); border-radius: 8px; font-size: 14px; }
+.contato .link-mapa:hover { background: #f6eed6; }
 a.btn-sm { text-decoration: none; color: inherit; display: inline-flex; align-items: center; }
 .itens input.falta-valor { outline: 2px solid var(--ouro); background: #fff8e6; }
 

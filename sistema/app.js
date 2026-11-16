@@ -11,6 +11,8 @@ const CONFIG = {
   cnpj: 'CNPJ 05.422.151/0001-51',
   ie: 'Insc. Estadual 77.488.901',
   validadePadraoDias: 15,
+  // busca usada no botão "Buscar no mapa" do Contato
+  mapa: 'Marmoraria Shekina, BR-101 km 206, Casimiro de Abreu - RJ',
 };
 
 // Tabela de preços inicial. Depois de aberta, os preços são alterados pelo sistema
@@ -225,6 +227,7 @@ $('#cat-filtros').addEventListener('click', e => {
 function aplicarConfig() {
   $$('[data-cfg]').forEach(el => (el.textContent = CONFIG[el.dataset.cfg]));
   $('#contato-email').hidden = !CONFIG.email;
+  $('#link-mapa-empresa').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONFIG.mapa)}`;
   $$('[data-whatsapp]').forEach(a => (a.href = linkWhats(CONFIG.telefones[0])));
   $('#lista-whats').innerHTML = CONFIG.telefones
     .map(t => `<a href="${linkWhats(t)}" target="_blank" rel="noopener">${esc(t)}</a>`).join('');
