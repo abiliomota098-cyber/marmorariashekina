@@ -288,9 +288,32 @@ function svgCompleto(folha, titulo = '') {
 let texUsadas = new Set();
 const cacheTexSvg = {};
 const pedraDaPeca = f => (f.material && typeof pedraDoNome === 'function' ? pedraDoNome(f.material) : null);
+// foto real da pedra (fotos/<id>.jpg) quando existe; senão a textura ilustrativa.
+// A foto vira imagem embutida (data URL) para funcionar também no PNG exportado e no 3D.
+const fotosPedra = {};
 function urlTexturaPedra(pedra) {
-  return (cacheTexSvg[pedra.id] ??= texturaPedra(pedra.tex, CATALOGO.indexOf(pedra) * 13 + 1).slice(5, -2));
+  return fotosPedra[pedra.id] || (cacheTexSvg[pedra.id] ??= texturaPedra(pedra.tex, CATALOGO.indexOf(pedra) * 13 + 1).slice(5, -2));
 }
+// fotos/lista.json é gerado pelo publicar.ps1 com as fotos existentes (id -> versão)
+async function carregarFotosPedras() {
+  let lista;
+  try { lista = await (await fetch('fotos/lista.json', { cache: 'no-store' })).json(); } catch { return; }
+  await Promise.all(Object.entries(lista || {}).map(([id, versao]) => new Promise(ok => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width = 400; c.height = 300; // mesmo tamanho da textura ilustrativa (escala 70 × 52 cm)
+      const k = Math.max(400 / img.width, 300 / img.height), w = img.width * k, h = img.height * k;
+      c.getContext('2d').drawImage(img, (400 - w) / 2, (300 - h) / 2, w, h);
+      fotosPedra[id] = c.toDataURL('image/jpeg', 0.85);
+      ok();
+    };
+    img.onerror = ok;
+    img.src = `fotos/${id}.jpg?v=${encodeURIComponent(versao)}`;
+  })));
+  if ($('#dlg-desenho').open) { mostrarAmostraPedra(); renderDesenho(); }
+}
+carregarFotosPedras();
 function fillPedra(f) {
   const pedra = pedraDaPeca(f);
   if (!pedra) return '#f1ece2';

@@ -206,7 +206,8 @@ async function materialPedra(p) {
 }
 
 function texturaPedra3d(pedra) {
-  return (cacheTex3d[pedra.id] ??= new Promise(ok => {
+  // a chave muda quando a foto real termina de carregar (aí troca a textura ilustrativa pela foto)
+  return (cacheTex3d[pedra.id + (fotosPedra[pedra.id] ? ':foto' : '')] ??= new Promise(ok => {
     const img = new Image();
     img.onload = () => {
       const c = document.createElement('canvas');
@@ -219,7 +220,7 @@ function texturaPedra3d(pedra) {
       ok(tx);
     };
     img.onerror = () => ok(null);
-    img.src = texturaPedra(pedra.tex, CATALOGO.indexOf(pedra) * 13 + 1).slice(5, -2); // tira o url('...')
+    img.src = urlTexturaPedra(pedra); // foto real ou textura ilustrativa (producao.js)
   }));
 }
 
