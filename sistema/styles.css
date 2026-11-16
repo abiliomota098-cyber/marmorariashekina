@@ -41,7 +41,7 @@ input, select, textarea, button { font: inherit; color: inherit; }
   position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 0 24px; height: 60px;
-  background-color: #000; color: var(--pedra-100);
+  background-color: #000; color: #f3f0eb;
   /* mármore preto aplicado pelo app.js (aplicarFundoMarmore) */
   background-size: cover; background-position: center 40%;
   border-bottom: 1px solid rgba(196,154,44,.55);
@@ -53,7 +53,7 @@ input, select, textarea, button { font: inherit; color: inherit; }
 .tabs a {
   color: var(--pedra-400); text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 15px;
 }
-.tabs a:hover { color: var(--pedra-100); }
+.tabs a:hover { color: #f3f0eb; }
 .tabs a.ativo { color: var(--pedra-900); background: var(--pedra-100); }
 
 .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
@@ -105,7 +105,7 @@ input, select, textarea, button { font: inherit; color: inherit; }
 .hero-logo { width: 100%; max-width: 520px; justify-self: center; display: block; mix-blend-mode: lighten; }
 .eyebrow { color: var(--ouro); text-transform: uppercase; letter-spacing: .14em; font-size: 13px; font-weight: 600; margin: 0 0 12px; }
 .hero h1 { font-size: clamp(34px, 5vw, 56px); font-weight: 700; max-width: 16ch; font-family: Georgia, "Times New Roman", serif; }
-.lead { font-size: 19px; color: var(--pedra-200); max-width: 46ch; margin: 16px 0 28px; }
+.lead { font-size: 19px; color: #e4dfd8; /* fixo: fica sobre o mármore preto nos dois modos */ max-width: 46ch; margin: 16px 0 28px; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; }
 
 .diferenciais {
