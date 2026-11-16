@@ -333,7 +333,8 @@ select.status-obra { padding: 4px 8px; border: 1px solid var(--pedra-200); borde
 .des-folhas { display: flex; gap: 4px; padding: 8px 10px 0; flex-wrap: wrap; flex: 1; }
 .des-pedra { flex-direction: row; align-items: center; gap: 6px; padding: 6px 0; font-size: 13px; font-weight: 600; color: var(--pedra-800); }
 .des-pedra select { padding: 5px 8px; border: 1px solid var(--pedra-200); border-radius: 7px; font-size: 13px; max-width: 220px; }
-.des-pedra-cor { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--pedra-400); background-size: cover; flex: none; }
+/* amostra com zoom: mostra um pedaço da chapa em tamanho próximo do real, e não a chapa inteira encolhida */
+.des-pedra-cor { width: 34px; height: 34px; border-radius: 7px; border: 1px solid var(--pedra-400); background-size: 260%; background-position: center; flex: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
 .des-saia { font-size: 11px; text-align: center; gap: 2px; }
 .des-saia input { width: 100%; padding: 3px 4px; font-size: 12px; border: 1px solid var(--ouro); border-radius: 5px; text-align: center; }
 .folha-tab { border: 1px solid var(--pedra-200); border-bottom: 0; background: var(--pedra-100); padding: 6px 14px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 13px; }

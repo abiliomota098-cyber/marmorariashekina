@@ -344,6 +344,7 @@ function mostrarAmostraPedra() {
   const amostra = $('#des-pedra-cor');
   amostra.style.backgroundImage = pedra ? `url("${urlTexturaPedra(pedra)}")` : 'none';
   amostra.style.backgroundColor = pedra ? pedra.tex.base : '#f1ece2';
+  amostra.title = pedra ? `${pedra.nome}${fotosPedra[pedra.id] ? '' : ' (textura ilustrativa)'}` : '';
 }
 
 // ---------- estado do editor ----------
