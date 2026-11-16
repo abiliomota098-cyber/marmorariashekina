@@ -17,7 +17,7 @@
     });
   </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
   <header class="topbar">
@@ -419,10 +419,11 @@
   <datalist id="dl-materiais"></datalist>
 
   <script src="vendor/supabase.js"></script>
-  <script src="acesso.js"></script>
-  <script src="catalogo.js"></script>
-  <script src="app.js"></script>
-  <script src="producao.js"></script>
-  <script src="v3d.js"></script>
+  <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
+  <script src="acesso.js?v=3"></script>
+  <script src="catalogo.js?v=3"></script>
+  <script src="app.js?v=3"></script>
+  <script src="producao.js?v=3"></script>
+  <script src="v3d.js?v=3"></script>
 </body>
 </html>

@@ -95,16 +95,35 @@ document.addEventListener('visibilitychange', async () => {
 });
 addEventListener('beforeunload', e => { if (pendente || salvando) { e.preventDefault(); e.returnValue = ''; } });
 
-// dados que ficaram salvos só neste navegador (versão antiga do sistema)
+// dados que ficaram salvos só neste navegador (versão antiga do sistema):
+// junta com o que já está na nuvem, sem apagar nada
 async function oferecerImportacao() {
-  if (!perfil?.admin || db.orcamentos.length) return;
+  if (!perfil) return;
   let local;
   try { local = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch { return; }
   if (!local || !Array.isArray(local.orcamentos) || !local.orcamentos.length) return;
-  if (!confirm(`Encontrei ${local.orcamentos.length} orçamento(s) salvos só neste computador (versão antiga do sistema).\n\nEnviar para o sistema na nuvem, para todos os usuários autorizados verem?`)) return;
-  db = migrar(local);
+  local = migrar(local);
+  const ids = new Set(db.orcamentos.map(o => o.id));
+  const novos = local.orcamentos.filter(o => !ids.has(o.id));
+  if (!novos.length) {
+    localStorage.setItem(STORAGE_KEY + '.importado', localStorage.getItem(STORAGE_KEY));
+    localStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+  if (!confirm(`Encontrei ${novos.length} orçamento(s) salvos só neste computador (versão antiga do sistema).\n\nEnviar para o sistema na nuvem, para todos os usuários autorizados verem?`)) return;
+  const nuvemVazia = !db.orcamentos.length;
+  const numeros = new Set(db.orcamentos.map(o => o.numero));
+  db.seq = Math.max(+db.seq || 0, +local.seq || 0, ...db.orcamentos.map(o => +o.numero || 0));
+  novos.forEach(o => {
+    if (o.numero != null && numeros.has(o.numero)) o.numero = ++db.seq; // número já usado na nuvem
+    numeros.add(o.numero);
+    db.orcamentos.push(o);
+  });
+  db.seq = Math.max(db.seq, ...db.orcamentos.map(o => +o.numero || 0));
+  if (nuvemVazia && local.precos) db.precos = local.precos; // nuvem vazia: usa a tabela de preços local
   pendente = true;
   await enviarDados();
+  mostrarAba();
   if (estadoSync === 'salvo') {
     localStorage.setItem(STORAGE_KEY + '.importado', localStorage.getItem(STORAGE_KEY));
     localStorage.removeItem(STORAGE_KEY);
@@ -291,6 +310,7 @@ const acessoPronto = new Promise(pronto => {
     atualizarConta();
     mostrarAba();
     pronto();
+    oferecerImportacao();
   });
 });
 
