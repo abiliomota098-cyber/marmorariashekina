@@ -42,8 +42,9 @@ function renderCatalogo() {
   $('#cat-info').hidden = !filtroCatalogo;
   $('#catalogo').innerHTML = CATALOGO.map((p, i) => ({ p, i })).filter(({ p }) => !filtroCatalogo || p.tipo === filtroCatalogo).map(({ p, i }) => `
     <article class="pedra">
-      <div class="pedra-img" style="background-image:${texturaPedra(p.tex, i * 13 + 1)}">
-        <img src="fotos/${p.id}.jpg" alt="${esc(p.nome)}" loading="lazy" onerror="this.remove()">
+      <div class="pedra-img">
+        <img src="img/pedras/${p.id}.jpg" alt="" loading="lazy" decoding="async" width="400" height="300">
+        <img src="fotos/${p.id}.jpg" alt="${esc(p.nome)}" loading="lazy" decoding="async" onerror="this.remove()">
         <span class="pedra-tipo">${TIPOS_PEDRA[p.tipo].s}</span>
       </div>
       <div class="pedra-info">
@@ -65,28 +66,8 @@ $('#cat-filtros').addEventListener('click', e => {
   renderCatalogo();
 });
 
-// ---------- fundo marmorizado ----------
-function rasterizarMarmore(svgUrl, aplicar) {
-  const img = new Image();
-  img.onload = () => {
-    const c = document.createElement('canvas');
-    c.width = img.width; c.height = img.height;
-    c.getContext('2d').drawImage(img, 0, 0);
-    let url;
-    try { url = c.toDataURL('image/jpeg', 0.88); } catch { url = img.src; }
-    aplicar(url);
-  };
-  img.src = svgUrl;
-}
-
 // ---------- início ----------
+// as texturas de mármore são imagens prontas (pasta img/), geradas a partir de catalogo.js
 $$('[data-scroll]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.scroll).scrollIntoView({ behavior: 'smooth' })));
 aplicarConfig();
-$('.hero').style.backgroundImage =
-  'radial-gradient(ellipse 34% 60% at 72% 50%, rgba(0,0,0,.75), transparent 75%),' +
-  'linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.15) 55%, rgba(0,0,0,.3)),' + marmoreHero();
 renderCatalogo();
-rasterizarMarmore(marmoreFundo(), url => { document.body.style.backgroundImage = `url("${url}")`; });
-rasterizarMarmore(marmoreHero().slice(5, -2), url => {
-  $('.topbar').style.backgroundImage = `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url("${url}")`;
-});

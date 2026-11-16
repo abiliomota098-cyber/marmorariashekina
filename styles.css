@@ -470,3 +470,21 @@ html { scroll-behavior: smooth; }
 .topbar > a.conta-btn { margin-left: 14px; text-decoration: none; white-space: nowrap; background: rgba(255,255,255,.08); color: #f5dd9b; border: 1px solid var(--ouro); border-radius: 8px; padding: 6px 12px; font-size: .85rem; }
 .topbar > a.conta-btn:hover { background: rgba(196,154,44,.25); }
 @media (max-width: 700px) { .topbar > a.conta-btn { margin-left: 4px; padding: 5px 8px; font-size: .78rem; } }
+
+/* ===== desempenho: texturas como imagens prontas ===== */
+body { background-image: none !important; background-attachment: scroll; }
+/* fundo de mármore fixo numa camada própria (não redesenha ao rolar) */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: #f4f1ec url("img/fundo.jpg") center / cover no-repeat; }
+.topbar { background-image: linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url("img/hero.jpg") !important; }
+.hero { overflow: hidden; background-image:
+  radial-gradient(ellipse 34% 60% at 72% 50%, rgba(0,0,0,.75), transparent 75%),
+  linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.15) 55%, rgba(0,0,0,.3)),
+  url("img/hero.jpg"); }
+/* brilho animado só com transform (leve para o celular) */
+.hero::before { inset: 0 auto 0 -100%; width: 300%; background-size: 100% 100%;
+  background: linear-gradient(105deg, transparent 45%, rgba(255,236,190,.09) 50%, transparent 55%);
+  animation: brilho-leve 10s ease-in-out infinite; will-change: transform; }
+@keyframes brilho-leve { from { transform: translateX(33%); } to { transform: translateX(-33%); } }
+.pedra-img { background: #ddd; overflow: hidden; }
+.pedra-img img:first-child { object-fit: cover; }
