@@ -489,3 +489,58 @@ label.chk input { width: auto; }
 }
 .sugestoes li { padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--pedra-900); font-size: 14px; }
 .sugestoes li:hover, .sugestoes li.marcado { background: #f6eed6; color: var(--pedra-900); }
+
+/* ---------- modo claro / escuro ---------- */
+.topo-dir { display: flex; align-items: center; gap: 4px; }
+.tema-btn {
+  width: 34px; height: 34px; flex: none; border-radius: 50%; cursor: pointer; font-size: 16px; line-height: 1;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(196,154,44,.55); color: #f3eadb;
+}
+.tema-btn:hover { background: rgba(196,154,44,.25); }
+.dlg { background: var(--branco); color: var(--pedra-900); }
+
+/* só na tela: a impressão continua sempre clara */
+@media screen {
+  :root[data-tema="escuro"] {
+    color-scheme: dark;
+    --pedra-900: #f1ece4;
+    --pedra-800: #ddd6cc;
+    --pedra-600: #b3aaa0;
+    --pedra-400: #857d74;
+    --pedra-200: #3a3531;
+    --pedra-100: #1b1917;
+    --branco: #24211e;
+    --verde-claro: #1c3326;
+    --vermelho-claro: #3d221d;
+    --azul-claro: #1d2a38;
+    --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+  }
+  :root[data-tema="escuro"] body { background-image: none !important; background-color: #141210; }
+  :root[data-tema="escuro"] .tabs a.ativo { background: #f3f0eb; color: #1d1b19; }
+  :root[data-tema="escuro"] #toast { background: #f3f0eb; color: #1d1b19; }
+  :root[data-tema="escuro"] .dlg::backdrop { background: rgba(0,0,0,.7); }
+  /* tons dourados claros usados em destaques */
+  :root[data-tema="escuro"] .acab-lados label:has(input:checked),
+  :root[data-tema="escuro"] .acab-saia,
+  :root[data-tema="escuro"] .aviso-icone,
+  :root[data-tema="escuro"] .sugestoes li:hover,
+  :root[data-tema="escuro"] .sugestoes li.marcado,
+  :root[data-tema="escuro"] .contato .link-mapa:hover { background: #3a3020; }
+  :root[data-tema="escuro"] .itens input.falta-valor { background: #3a3020; }
+  :root[data-tema="escuro"] .sugestoes, :root[data-tema="escuro"] .aviso-campo input { background: var(--branco); }
+  :root[data-tema="escuro"] .link-mapa, :root[data-tema="escuro"] .aviso-icone { color: var(--ouro-claro); }
+  :root[data-tema="escuro"] .chip.ativo { border-color: var(--ouro); }
+  :root[data-tema="escuro"] .lista-usuarios small { color: #c9b98f; }
+  :root[data-tema="escuro"] .end-titulo small { color: var(--pedra-400); }
+  /* a área do desenho técnico continua branca, para ler as medidas */
+  :root[data-tema="escuro"] .des-canvas { background: #1b1917; }
+}
+@media screen {
+  :root[data-tema="escuro"] .kan-col { background: rgba(36, 33, 30, .85); }
+  :root[data-tema="escuro"] .b-aberto { color: #9cc0e6; }
+  :root[data-tema="escuro"] .b-vendido { color: #86d3a5; }
+  :root[data-tema="escuro"] .b-atraso,
+  :root[data-tema="escuro"] .tag-warn,
+  :root[data-tema="escuro"] .atrasado td:first-child { color: #f2a596; }
+  :root[data-tema="escuro"] .btn-sm.btn-danger { color: #f2a596; border-color: #6b3a31; }
+}

@@ -977,6 +977,20 @@ $$('[data-fechar]').forEach(b => b.addEventListener('click', () => b.closest('di
 $$('[data-scroll]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.scroll).scrollIntoView({ behavior: 'smooth' })));
 window.addEventListener('hashchange', mostrarAba);
 aplicarConfig();
+
+// modo claro/escuro (o tema inicial é aplicado no <head> do index.html)
+function mostrarBotaoTema() {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  $('#btn-tema').textContent = escuro ? '☀️' : '🌙';
+  $('#btn-tema').title = escuro ? 'Mudar para o modo claro' : 'Mudar para o modo escuro';
+}
+$('#btn-tema').addEventListener('click', () => {
+  const novo = document.documentElement.dataset.tema === 'escuro' ? 'claro' : 'escuro';
+  document.documentElement.dataset.tema = novo;
+  try { localStorage.setItem('marmoraria.tema', novo); } catch {}
+  mostrarBotaoTema();
+});
+mostrarBotaoTema();
 $('.hero').style.backgroundImage =
   'radial-gradient(ellipse 34% 60% at 72% 50%, rgba(0,0,0,.75), transparent 75%),' +
   'linear-gradient(90deg, rgba(0,0,0,.6), rgba(0,0,0,.15) 55%, rgba(0,0,0,.3)),' + marmoreHero();

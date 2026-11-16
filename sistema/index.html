@@ -16,8 +16,17 @@
       });
     });
   </script>
+  <!-- tema claro/escuro: aplica antes de desenhar a página (sem piscar). Sem escolha salva, segue o computador -->
+  <script>
+    (() => {
+      let t = null;
+      try { t = localStorage.getItem('marmoraria.tema'); } catch {}
+      if (t !== 'claro' && t !== 'escuro') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+      document.documentElement.dataset.tema = t;
+    })();
+  </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
   <header class="topbar">
@@ -28,7 +37,10 @@
       <a href="#producao" data-tab="producao" data-restrito hidden>Produção</a>
       <a href="#financeiro" data-tab="financeiro" data-restrito hidden>Financeiro</a>
     </nav>
-    <div class="conta" id="conta"></div>
+    <div class="topo-dir">
+      <button type="button" class="tema-btn" id="btn-tema" aria-label="Alternar modo claro/escuro"></button>
+      <div class="conta" id="conta"></div>
+    </div>
   </header>
 
   <main>
@@ -422,11 +434,11 @@
 
   <script src="vendor/supabase.js"></script>
   <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
-  <script src="avisos.js?v=9"></script>
-  <script src="acesso.js?v=9"></script>
-  <script src="catalogo.js?v=9"></script>
-  <script src="app.js?v=9"></script>
-  <script src="producao.js?v=9"></script>
-  <script src="v3d.js?v=9"></script>
+  <script src="avisos.js?v=10"></script>
+  <script src="acesso.js?v=10"></script>
+  <script src="catalogo.js?v=10"></script>
+  <script src="app.js?v=10"></script>
+  <script src="producao.js?v=10"></script>
+  <script src="v3d.js?v=10"></script>
 </body>
 </html>
