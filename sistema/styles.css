@@ -453,3 +453,35 @@ a.btn-sm { text-decoration: none; color: inherit; display: inline-flex; align-it
 label.chk { flex-direction: row; align-items: center; gap: 8px; display: flex; }
 label.chk input { width: auto; }
 @media (max-width: 700px) { .conta-nome { display: none; } .conta { margin-left: 6px; } }
+
+/* ---------- avisos do sistema (avisos.js) ---------- */
+.aviso { width: min(440px, calc(100vw - 32px)); overflow: hidden; border-top: 4px solid var(--ouro); }
+.aviso[data-tipo="perigo"] { border-top-color: var(--vermelho); }
+.aviso-corpo { display: flex; gap: 16px; padding: 22px 22px 18px; }
+.aviso-icone {
+  flex: none; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; font: 700 20px/1 Georgia, "Times New Roman", serif;
+  background: #f6eed6; color: var(--ouro-escuro);
+}
+.aviso[data-tipo="perigo"] .aviso-icone { background: var(--vermelho-claro); color: var(--vermelho); }
+.aviso-texto { flex: 1; min-width: 0; }
+.aviso-titulo { font-size: 18px; margin-bottom: 6px; }
+.aviso-msg { margin: 0; color: var(--pedra-600); white-space: pre-line; overflow-wrap: anywhere; }
+.aviso-campo { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; font-size: 14px; color: var(--pedra-600); }
+.aviso-campo input { padding: 9px 12px; border: 1px solid var(--pedra-200); border-radius: 8px; color: var(--pedra-900); background: #fff; }
+.aviso-campo input:focus { outline: 2px solid var(--ouro); outline-offset: 0; border-color: var(--ouro); }
+.aviso-botoes { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 22px; background: var(--pedra-100); border-top: 1px solid var(--pedra-200); }
+.btn-perigo { background: var(--vermelho); color: #fff; }
+.btn-perigo:hover { filter: brightness(.92); }
+.aviso .btn:focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; }
+@media (max-width: 480px) { .aviso-botoes .btn { flex: 1; } }
+
+/* sugestões dos campos de Descrição / Material */
+.sugestoes {
+  position: fixed; z-index: 1000; margin: 0; padding: 6px; list-style: none;
+  max-height: 240px; overflow-y: auto;
+  background: #fff; border: 1px solid var(--pedra-200); border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+.sugestoes li { padding: 8px 12px; border-radius: 6px; cursor: pointer; color: var(--pedra-900); font-size: 14px; }
+.sugestoes li:hover, .sugestoes li.marcado { background: #f6eed6; color: var(--pedra-900); }

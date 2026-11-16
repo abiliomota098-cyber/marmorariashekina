@@ -24,8 +24,8 @@ async function carregarThree() {
 async function abrir3D() {
   const folha = folhaAtual();
   if (!folha.formas.some(f => f.t === 'peca'))
-    return alert('Desenhe as peças (ferramenta Peça ou "Peças do orçamento") antes de ver em 3D.');
-  try { await carregarThree(); } catch { return alert('Não foi possível carregar o módulo 3D (pasta vendor).'); }
+    return avisar('Desenhe as peças (ferramenta Peça ou "Peças do orçamento") antes de ver em 3D.', { titulo: 'Nada para mostrar em 3D' });
+  try { await carregarThree(); } catch { return avisar('Verifique a internet e tente de novo.', { titulo: 'Não foi possível carregar o 3D' }); }
   $('#v3d-titulo').textContent = `3D — Obra #${des.obra.numero} · ${folha.nome}`;
   $('#v3d-esp').value = String(folha.espessura || 2);
   $('#dlg-3d').showModal();

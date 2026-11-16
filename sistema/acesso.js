@@ -75,11 +75,11 @@ async function enviarDados() {
   if (!data.length) {
     // ou outra pessoa salvou antes (versão mudou) ou o acesso foi bloqueado
     const { data: ainda } = await sb.from('dados').select('atualizado_em').eq('id', 1).maybeSingle();
-    if (!ainda) { alert('Seu acesso foi bloqueado pelo administrador.'); return sair(); }
-    alert('Outra pessoa salvou alterações ao mesmo tempo que você. Os dados foram atualizados; confira e refaça a sua última alteração, se preciso.');
+    if (!ainda) { await sair(); return avisar('Fale com o administrador para liberar de novo.', { titulo: 'Seu acesso foi bloqueado' }); }
     document.querySelectorAll('dialog[open]').forEach(d => d.close());
     await carregarDados();
     mostrarAba();
+    avisar('Outra pessoa salvou alterações ao mesmo tempo que você. Os dados foram atualizados; confira e refaça a sua última alteração, se preciso.', { titulo: 'Dados atualizados' });
     return;
   }
   versao = data[0].atualizado_em;
@@ -110,7 +110,8 @@ async function oferecerImportacao() {
     localStorage.removeItem(STORAGE_KEY);
     return;
   }
-  if (!confirm(`Encontrei ${novos.length} orçamento(s) salvos só neste computador (versão antiga do sistema).\n\nEnviar para o sistema na nuvem, para todos os usuários autorizados verem?`)) return;
+  if (!await confirmar(`Eles estão salvos só neste computador (versão antiga do sistema). Enviar para a nuvem, para todos os usuários autorizados verem?`,
+    { titulo: `Encontrei ${novos.length} orçamento(s) neste computador`, ok: 'Enviar para a nuvem', cancelar: 'Agora não' })) return;
   const nuvemVazia = !db.orcamentos.length;
   const numeros = new Set(db.orcamentos.map(o => o.numero));
   db.seq = Math.max(+db.seq || 0, +local.seq || 0, ...db.orcamentos.map(o => +o.numero || 0));
@@ -241,17 +242,17 @@ qa('#lista-usuarios').addEventListener('click', async e => {
       await chamarAdmin({ acao: 'ativo', id: b.dataset.uAtivo, ativo });
       toast(ativo ? 'Acesso liberado.' : 'Acesso bloqueado.');
     } else if (b.dataset.uSenha) {
-      const senha = prompt(`Nova senha para "${b.dataset.nome}" (mínimo 8 caracteres):`);
+      const senha = await perguntar('Nova senha (mínimo 8 caracteres)', '', { titulo: `Nova senha para "${b.dataset.nome}"`, ok: 'Salvar senha' });
       if (!senha) return;
       await chamarAdmin({ acao: 'senha', id: b.dataset.uSenha, senha });
       toast('Senha alterada.');
     } else if (b.dataset.uRemover) {
-      if (!confirm(`Remover o acesso de "${b.dataset.nome}"? Essa pessoa não vai mais conseguir entrar.`)) return;
+      if (!await confirmar('Essa pessoa não vai mais conseguir entrar.', { titulo: `Remover o acesso de "${b.dataset.nome}"?`, ok: 'Remover', perigo: true })) return;
       b.disabled = true;
       await chamarAdmin({ acao: 'remover', id: b.dataset.uRemover });
       toast('Acesso removido.');
     } else return;
-  } catch (err) { alert(err.message); }
+  } catch (err) { avisar(err.message, { titulo: 'Não foi possível concluir' }); }
   renderUsuarios();
 });
 
@@ -265,7 +266,7 @@ qa('#form-novo-usuario').addEventListener('submit', async e => {
     e.target.reset();
     toast(`Usuário "${nome}" cadastrado.`);
     renderUsuarios();
-  } catch (err) { alert(err.message); }
+  } catch (err) { avisar(err.message, { titulo: 'Não foi possível cadastrar' }); }
   finally { btn.disabled = false; }
 });
 
@@ -274,9 +275,9 @@ qa('#form-trocar-senha').addEventListener('submit', async e => {
   if (!perfil) return;
   const { data: { user } } = await sb.auth.getUser();
   const { error: e1 } = await sb.auth.signInWithPassword({ email: user.email, password: qa('#ts-atual').value });
-  if (e1) return alert('Senha atual incorreta.');
+  if (e1) return avisar('Confira a senha atual e tente de novo.', { titulo: 'Senha atual incorreta' });
   const { error } = await sb.auth.updateUser({ password: qa('#ts-nova').value });
-  if (error) return alert(/weak|short|least/i.test(error.message) ? 'A nova senha é fraca demais (mínimo 8 caracteres).' : error.message);
+  if (error) return avisar(/weak|short|least/i.test(error.message) ? 'Use pelo menos 8 caracteres.' : error.message, { titulo: 'Não foi possível trocar a senha' });
   e.target.reset();
   toast('Senha alterada.');
 });

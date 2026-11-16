@@ -59,7 +59,7 @@ function cardProducao(o) {
   </article>`;
 }
 
-$('#kanban').addEventListener('click', e => {
+$('#kanban').addEventListener('click', async e => {
   const btn = e.target.closest('[data-acao]');
   if (!btn) return;
   const o = buscarOrc(btn.closest('.kan-card').dataset.id);
@@ -69,7 +69,7 @@ $('#kanban').addEventListener('click', e => {
     case 'ordem': imprimirOrdem(o); break;
     case 'avancar':
       if (o.venda.statusObra === 'desenho' && !temDesenho(o) &&
-          !confirm(`A obra #${o.numero} ainda não tem desenho. Enviar para o corte mesmo assim?`)) return;
+          !await confirmar('Ela ainda não tem desenho. Enviar para o corte mesmo assim?', { titulo: `Obra #${o.numero} sem desenho`, ok: 'Enviar para o corte' })) return;
       o.venda.statusObra = ETAPAS[i + 1];
       salvar(); renderProducao();
       toast(`Obra #${o.numero}: ${STATUS_OBRA[o.venda.statusObra]}`);
@@ -502,8 +502,9 @@ svgDes.addEventListener('pointerdown', e => {
       return;
     }
     case 'texto': {
-      const t = prompt('Texto:');
-      if (t && t.trim()) { guardar(); formas().push({ t: 'texto', x: s.x, y: s.y, texto: t.trim() }); aplicar(); }
+      perguntar('Texto', '', { titulo: 'Adicionar texto', ok: 'Adicionar' }).then(t => {
+        if (t && t.trim()) { guardar(); formas().push({ t: 'texto', x: s.x, y: s.y, texto: t.trim() }); aplicar(); }
+      });
       return;
     }
     case 'mover': {
@@ -576,35 +577,36 @@ svgDes.addEventListener('pointerup', terminarArrasto);
 svgDes.addEventListener('pointercancel', terminarArrasto);
 
 // duplo clique (ferramenta Mover): digitar medidas exatas
-svgDes.addEventListener('dblclick', e => {
+svgDes.addEventListener('dblclick', async e => {
   if (des.ferr !== 'mover') return;
   const alvo = document.elementFromPoint(e.clientX, e.clientY)?.closest('[data-i]');
   if (!alvo) return;
   const f = formas()[+alvo.dataset.i];
   const num = v => parseFloat(String(v ?? '').replace(',', '.'));
   if (f.t === 'peca' || f.t === 'recorte') {
-    const m = prompt('Medidas em cm (comprimento x largura):', `${fmtCm(f.w)} x ${fmtCm(f.h)}`);
+    const tituloForma = f.t === 'peca' ? 'Editar peça' : 'Editar recorte';
+    const m = await perguntar('Medidas em cm (comprimento x largura)', `${fmtCm(f.w)} x ${fmtCm(f.h)}`, { titulo: tituloForma, ok: 'Próximo' });
     if (m === null) return;
     const [w, h] = m.split(/[x×*]/i).map(num);
-    if (!(w > 0 && h > 0)) return alert('Use o formato: 180 x 60');
+    if (!(w > 0 && h > 0)) return avisar('Use o formato: 180 x 60', { titulo: 'Medidas inválidas' });
     guardar(); f.w = w; f.h = h;
-    const nome = prompt(f.t === 'peca' ? 'Nome da peça (opcional):' : 'Tipo do recorte (ex.: Cuba, Cooktop) — opcional:', f.rotulo || '');
+    const nome = await perguntar(f.t === 'peca' ? 'Nome da peça (opcional)' : 'Tipo do recorte (ex.: Cuba, Cooktop) — opcional', f.rotulo || '', { titulo: tituloForma, ok: 'Salvar' });
     if (nome !== null) f.rotulo = nome.trim();
     if (f.t === 'peca' && Object.values(bordasDe(f)).some(ehEsquadria)) {
-      const saia = num(prompt('Altura da saia da meia esquadria (cm):', fmtCm(+f.saia || 4)));
+      const saia = num(await perguntar('Altura da saia da meia esquadria (cm)', fmtCm(+f.saia || 4), { titulo: tituloForma, ok: 'Salvar' }));
       if (saia > 0) f.saia = saia;
     }
   } else if (f.t === 'texto') {
-    const t = prompt('Texto:', f.texto);
+    const t = await perguntar('Texto', f.texto, { titulo: 'Editar texto', ok: 'Salvar' });
     if (!t) return;
     guardar(); f.texto = t;
   } else if (f.t === 'circulo') {
-    const d = num(prompt('Diâmetro em cm:', fmtCm(f.r * 2)));
+    const d = num(await perguntar('Diâmetro em cm', fmtCm(f.r * 2), { titulo: 'Editar círculo', ok: 'Salvar' }));
     if (!(d > 0)) return;
     guardar(); f.r = d / 2;
   } else if (f.t === 'linha' || f.t === 'cota') {
     const len = Math.hypot(f.x2 - f.x1, f.y2 - f.y1);
-    const v = num(prompt('Comprimento em cm:', fmtCm(len)));
+    const v = num(await perguntar('Comprimento em cm', fmtCm(len), { titulo: f.t === 'cota' ? 'Editar cota' : 'Editar linha', ok: 'Salvar' }));
     if (!(v > 0)) return;
     guardar(); f.x2 = r1(f.x1 + (f.x2 - f.x1) * v / len); f.y2 = r1(f.y1 + (f.y2 - f.y1) * v / len);
   } else return;
@@ -616,14 +618,14 @@ $('#des-borda-tipo').addEventListener('change', () => { atualizarCampoSaia(); es
 $('#des-saia').addEventListener('focus', () => escolherFerramenta('borda'));
 $('#des-espelho-alt').addEventListener('focus', () => escolherFerramenta('espelho'));
 $('#des-pedra').addEventListener('change', () => { mostrarAmostraPedra(); escolherFerramenta('pedra'); });
-$('#des-ferramentas').addEventListener('click', e => {
+$('#des-ferramentas').addEventListener('click', async e => {
   const b = e.target.closest('button');
   if (!b) return;
   if (b.dataset.ferr) return escolherFerramenta(b.dataset.ferr);
   switch (b.dataset.cmd) {
     case 'desfazer': desfazer(); break;
     case 'limpar':
-      if (formas().length && confirm(`Apagar tudo da "${folhaAtual().nome}"?`)) { guardar(); folhaAtual().formas = []; aplicar(); }
+      if (formas().length && await confirmar('Todo o desenho desta folha será apagado. Dá para desfazer com Ctrl+Z.', { titulo: `Apagar tudo da "${folhaAtual().nome}"?`, ok: 'Apagar tudo', perigo: true })) { guardar(); folhaAtual().formas = []; aplicar(); }
       break;
     case 'gerar': gerarPecas(); break;
   }
@@ -635,10 +637,10 @@ document.addEventListener('keydown', e => {
 });
 
 // cria automaticamente as peças cobradas por m² no orçamento
-function gerarPecas() {
+async function gerarPecas() {
   const itens = des.obra.itens.filter(it => it.unidade === 'm2' && +it.comprimento > 0 && +it.largura > 0);
-  if (!itens.length) return alert('O orçamento não tem itens cobrados por m² com comprimento e largura.');
-  if (formas().length && !confirm('Adicionar as peças do orçamento abaixo do que já está nesta folha?')) return;
+  if (!itens.length) return avisar('O orçamento não tem itens cobrados por m² com comprimento e largura.', { titulo: 'Nenhuma peça para criar' });
+  if (formas().length && !await confirmar('As peças do orçamento serão adicionadas abaixo do que já está nesta folha.', { titulo: 'Adicionar peças do orçamento?', ok: 'Adicionar' })) return;
   guardar();
   const fundo = formas().reduce((m, f) => Math.max(m, ...pontosForma(f).map(p => p[1])), 0);
   let x = 30, y = formas().length ? fundo + 45 : 30, alturaLinha = 0;
@@ -663,7 +665,7 @@ function gerarPecas() {
 }
 
 // ---------- folhas ----------
-$('#des-folhas').addEventListener('click', e => {
+$('#des-folhas').addEventListener('click', async e => {
   const b = e.target.closest('button');
   if (!b) return;
   const fs = des.obra.producao.folhas;
@@ -671,16 +673,16 @@ $('#des-folhas').addEventListener('click', e => {
     fs.push({ id: uid(), nome: `Folha ${fs.length + 1}`, formas: [] });
     des.folha = fs.length - 1;
   } else if (b.dataset.excluir !== undefined) {
-    if (!confirm(`Excluir a "${folhaAtual().nome}" e todo o desenho dela?`)) return;
+    if (!await confirmar('A folha e todo o desenho dela serão apagados.', { titulo: `Excluir a "${folhaAtual().nome}"?`, ok: 'Excluir folha', perigo: true })) return;
     fs.splice(des.folha, 1);
     des.folha = Math.max(0, des.folha - 1);
   } else des.folha = +b.dataset.i;
   des.pilha = [];
   salvar(); renderFolhas(); renderDesenho();
 });
-$('#des-folhas').addEventListener('dblclick', e => {
+$('#des-folhas').addEventListener('dblclick', async e => {
   if (!e.target.closest('[data-i]')) return;
-  const n = prompt('Nome da folha (ex.: Cozinha, Banheiro social):', folhaAtual().nome);
+  const n = await perguntar('Nome da folha (ex.: Cozinha, Banheiro social)', folhaAtual().nome, { titulo: 'Renomear folha', ok: 'Salvar' });
   if (n && n.trim()) { folhaAtual().nome = n.trim(); salvar(); renderFolhas(); }
 });
 
@@ -711,7 +713,7 @@ $('#des-foto').addEventListener('change', async e => {
       salvar();
     } catch {
       fotos.pop();
-      alert('Não há mais espaço para fotos neste navegador. Remova fotos de obras já instaladas ou faça um backup.');
+      avisar('Não foi possível anexar esta foto. Tente uma imagem menor.', { titulo: 'Erro ao anexar foto' });
       break;
     }
   }
@@ -724,8 +726,8 @@ function renderFotos() {
     `<figure data-id="${f.id}"><img src="${f.src}" alt="${esc(f.nome)}"><button class="rm" title="Remover foto">×</button></figure>`).join('') ||
     '<p class="des-vazio">Anexe aqui um croqui feito à mão ou foto do local.</p>';
 }
-$('#des-fotos').addEventListener('click', e => {
-  if (!e.target.classList.contains('rm') || !confirm('Remover esta foto?')) return;
+$('#des-fotos').addEventListener('click', async e => {
+  if (!e.target.classList.contains('rm') || !await confirmar('', { titulo: 'Remover esta foto?', ok: 'Remover', perigo: true })) return;
   const p = des.obra.producao;
   p.fotos = p.fotos.filter(f => f.id !== e.target.closest('figure').dataset.id);
   salvar(); renderFotos();
@@ -734,7 +736,7 @@ $('#des-fotos').addEventListener('click', e => {
 // ---------- exportar ----------
 $('#des-png').addEventListener('click', () => {
   const f = folhaAtual(), o = des.obra;
-  if (!f.formas.length) return alert('Esta folha está vazia.');
+  if (!f.formas.length) return avisar('Desenhe algo nesta folha antes de exportar.', { titulo: 'Esta folha está vazia' });
   const img = new Image();
   img.onload = () => {
     const c = document.createElement('canvas');

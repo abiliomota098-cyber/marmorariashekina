@@ -283,7 +283,7 @@ function linhaOrc(o) {
   </tr>`;
 }
 
-$('#orc-body').addEventListener('click', e => {
+$('#orc-body').addEventListener('click', async e => {
   const btn = e.target.closest('[data-acao]');
   if (!btn) return;
   const o = buscarOrc(btn.closest('tr').dataset.id);
@@ -292,7 +292,7 @@ $('#orc-body').addEventListener('click', e => {
     case 'imprimir': imprimirOrcamento(o); break;
     case 'vender': abrirVenda(o); break;
     case 'recusar':
-      if (confirm(`Marcar o orçamento #${o.numero} como recusado?`)) { o.status = 'recusado'; salvar(); renderOrcamentos(); }
+      if (await confirmar('O orçamento sai de "Em aberto" e pode ser reaberto depois.', { titulo: `Marcar o orçamento #${o.numero} como recusado?`, ok: 'Marcar como recusado' })) { o.status = 'recusado'; salvar(); renderOrcamentos(); }
       break;
     case 'reabrir': o.status = 'pendente'; salvar(); renderOrcamentos(); break;
     case 'duplicar': {
@@ -303,7 +303,7 @@ $('#orc-body').addEventListener('click', e => {
       break;
     }
     case 'excluir':
-      if (confirm(`Excluir definitivamente o orçamento #${o.numero}?`)) {
+      if (await confirmar('Essa ação não pode ser desfeita.', { titulo: `Excluir o orçamento #${o.numero}?`, ok: 'Excluir', perigo: true })) {
         db.orcamentos = db.orcamentos.filter(x => x !== o);
         salvar(); renderOrcamentos();
       }
@@ -350,8 +350,8 @@ function renderItens() {
   $('#itens-body').innerHTML = editando.itens.map((it, i) => `
     <tr data-i="${i}">
       <td><input data-f="quantidade" type="number" min="0" step="1" value="${esc(it.quantidade)}" title="Quantidade de peças com o mesmo tamanho"></td>
-      <td><input data-f="descricao" list="dl-descricoes" value="${esc(it.descricao)}" placeholder="Ex.: Bancada de cozinha"></td>
-      <td><input data-f="material" list="dl-materiais" value="${esc(it.material)}" placeholder="Ex.: Granito São Gabriel"></td>
+      <td><input data-f="descricao" data-lista="dl-descricoes" autocomplete="off" value="${esc(it.descricao)}" placeholder="Ex.: Bancada de cozinha"></td>
+      <td><input data-f="material" data-lista="dl-materiais" autocomplete="off" value="${esc(it.material)}" placeholder="Ex.: Granito São Gabriel"></td>
       <td><select data-f="unidade">${Object.entries(UNIDADES).map(([k, v]) => `<option value="${k}" ${it.unidade === k ? 'selected' : ''}>${v}</option>`).join('')}</select></td>
       <td><input data-f="comprimento" type="number" min="0" step="0.01" value="${esc(it.comprimento)}" ${it.unidade === 'un' ? 'disabled' : ''}></td>
       <td><input data-f="largura" type="number" min="0" step="0.01" value="${esc(it.largura)}" ${it.unidade !== 'm2' ? 'disabled' : ''}></td>
@@ -565,16 +565,16 @@ $('#form-orc').addEventListener('submit', e => {
   if (!editando.itens.length || subtotal(editando) <= 0) {
     if (!editando.itens.length) editando.itens.push(itemVazio());
     renderItens();
-    alert('Adicione pelo menos um item com medida e preço.');
+    avisar('Adicione pelo menos um item com medida e preço.', { titulo: 'Orçamento sem itens' });
     return;
   }
   const semValor = editando.itens.find(it => it.cuba && chaveNome(it.cuba) === chaveNome(CUBA_ESCULPIDA) && !(+it.cubaPreco > 0));
   if (semValor) {
-    alert(`Informe o valor da cuba esculpida em "${semValor.descricao || 'item'}".`);
-    $(`#itens-body tr[data-i="${editando.itens.indexOf(semValor)}"] [data-f="cubaPreco"]`)?.focus();
+    avisar(`Informe o valor da cuba esculpida em "${semValor.descricao || 'item'}".`, { titulo: 'Falta o valor da cuba' })
+      .then(() => $(`#itens-body tr[data-i="${editando.itens.indexOf(semValor)}"] [data-f="cubaPreco"]`)?.focus());
     return;
   }
-  if (editando.desconto > subtotal(editando)) { alert('O desconto não pode ser maior que o subtotal.'); return; }
+  if (editando.desconto > subtotal(editando)) { avisar('O desconto não pode ser maior que o subtotal.', { titulo: 'Desconto inválido' }); return; }
 
   if (editando.id) {
     const i = db.orcamentos.findIndex(o => o.id === editando.id);
@@ -860,9 +860,10 @@ $('#obra-body').addEventListener('click', e => {
   renderFinanceiro();
 });
 
-$('#btn-cancelar-venda').addEventListener('click', () => {
+$('#btn-cancelar-venda').addEventListener('click', async () => {
   const o = obraAberta;
-  if (!confirm(`Cancelar a venda da obra #${o.numero}?\n\nEla sairá do Financeiro (incluindo parcelas já recebidas) e o orçamento voltará para "Em aberto".`)) return;
+  if (!await confirmar('Ela sairá do Financeiro (incluindo parcelas já recebidas) e o orçamento voltará para "Em aberto".',
+    { titulo: `Cancelar a venda da obra #${o.numero}?`, ok: 'Cancelar venda', cancelar: 'Voltar', perigo: true })) return;
   delete o.venda;
   o.status = 'pendente';
   salvar();
@@ -925,14 +926,15 @@ $('#inp-importar').addEventListener('change', async e => {
   try {
     const dados = JSON.parse(await file.text());
     if (!Array.isArray(dados.orcamentos)) throw new Error();
-    if (!confirm(`Importar ${dados.orcamentos.length} orçamento(s)? Os dados atuais serão substituídos.`)) return;
+    if (!await confirmar('Os dados atuais do sistema serão substituídos pelos do arquivo, para todos os usuários.',
+      { titulo: `Importar ${dados.orcamentos.length} orçamento(s)?`, ok: 'Importar', perigo: true })) return;
     db = migrar(dados);
     salvar();
     atualizarSugestoes();
     renderOrcamentos();
     toast('Backup importado.');
   } catch {
-    alert('Arquivo de backup inválido.');
+    avisar('Escolha um arquivo de backup gerado pelo próprio sistema.', { titulo: 'Arquivo de backup inválido' });
   }
 });
 
