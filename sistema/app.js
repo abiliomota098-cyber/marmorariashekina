@@ -88,15 +88,9 @@ function toast(msg) {
 }
 
 // ---------- dados ----------
-let db = carregar();
-
-function carregar() {
-  try {
-    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (d && Array.isArray(d.orcamentos)) return migrar(d);
-  } catch {}
-  return migrar({ seq: 0, orcamentos: [] });
-}
+// os dados ficam no Supabase e são carregados depois do login (acesso.js);
+// STORAGE_KEY só é usado para importar dados da versão antiga, que ficavam no navegador
+let db = migrar({ seq: 0, orcamentos: [] });
 // converte etapas da versão anterior para as etapas atuais
 function migrar(d) {
   const antigas = { producao: 'desenho', instalacao: 'pronto', concluida: 'instalado' };
@@ -122,7 +116,7 @@ function migrar(d) {
 const chaveNome = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
 const buscarPreco = nome => db.precos.find(p => chaveNome(p.nome) === chaveNome(nome));
 function salvar() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  agendarSalvar(); // envia para a nuvem (acesso.js)
 }
 const buscarOrc = id => db.orcamentos.find(o => o.id === id);
 
@@ -167,7 +161,9 @@ const ABAS = ['apresentacao', 'orcamentos', 'producao', 'financeiro'];
 function mostrarAba() {
   let aba = ABAS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'apresentacao';
   // abas internas só para usuários autorizados (acesso.js)
-  if (aba !== 'apresentacao' && !usuarioAtual()) {
+  // ainda conferindo se já havia sessão aberta: mostra a apresentação e espera
+  if (aba !== 'apresentacao' && !acessoIniciado) aba = 'apresentacao';
+  else if (aba !== 'apresentacao' && !usuarioAtual()) {
     pedirLogin(aba);
     // em file:// o replaceState pode ser bloqueado; não é essencial
     try { history.replaceState(null, '', '#apresentacao'); } catch {}

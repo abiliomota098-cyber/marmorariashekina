@@ -9,8 +9,11 @@
   <script>
     addEventListener('load', () => {
       if (location.hash) return;
-      if (usuarioAtual()) location.hash = '#orcamentos';
-      else pedirLogin('orcamentos');
+      acessoPronto.then(() => {
+        if (location.hash) return;
+        if (usuarioAtual()) location.hash = '#orcamentos';
+        else pedirLogin('orcamentos');
+      });
     });
   </script>
   <link rel="icon" href="logo-s.png">
@@ -230,7 +233,6 @@
         <p class="dica" id="login-dica">Orçamentos, Produção e Financeiro são apenas para pessoas autorizadas.</p>
         <label>Usuário<input id="login-nome" autocomplete="username" required></label>
         <label>Senha<input id="login-senha" type="password" autocomplete="current-password" required></label>
-        <label id="login-conf-wrap" hidden>Repita a senha<input id="login-conf" type="password" autocomplete="new-password"></label>
         <p class="login-erro" id="login-erro"></p>
       </div>
       <footer class="dlg-foot"><span></span>
@@ -248,8 +250,7 @@
           <legend>Novo usuário</legend>
           <form id="form-novo-usuario" class="grid2">
             <label>Nome de usuário<input id="nu-nome" required autocomplete="off"></label>
-            <label>Senha (mín. 6)<input id="nu-senha" type="password" minlength="6" required autocomplete="new-password"></label>
-            <label class="chk"><input type="checkbox" id="nu-admin"> Pode gerenciar usuários</label>
+            <label>Senha (mín. 8)<input id="nu-senha" type="password" minlength="8" required autocomplete="new-password"></label>
             <div><button class="btn-sm btn-ok">+ Adicionar usuário</button></div>
           </form>
         </fieldset>
@@ -257,7 +258,7 @@
           <legend>Trocar minha senha</legend>
           <form id="form-trocar-senha" class="grid2">
             <label>Senha atual<input id="ts-atual" type="password" required autocomplete="current-password"></label>
-            <label>Nova senha (mín. 6)<input id="ts-nova" type="password" minlength="6" required autocomplete="new-password"></label>
+            <label>Nova senha (mín. 8)<input id="ts-nova" type="password" minlength="8" required autocomplete="new-password"></label>
             <div><button class="btn-sm">Trocar senha</button></div>
           </form>
         </fieldset>
@@ -417,6 +418,7 @@
   </datalist>
   <datalist id="dl-materiais"></datalist>
 
+  <script src="vendor/supabase.js"></script>
   <script src="acesso.js"></script>
   <script src="catalogo.js"></script>
   <script src="app.js"></script>

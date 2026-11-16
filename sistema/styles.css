@@ -444,6 +444,12 @@ a.btn-sm { text-decoration: none; color: inherit; display: inline-flex; align-it
 .lista-usuarios { list-style: none; padding: 0; margin: 0 0 14px; }
 .lista-usuarios li { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; border-bottom: 1px solid #eee; }
 .lista-usuarios small { color: #8a7a55; margin-left: 4px; }
+.lista-usuarios li { gap: 8px; flex-wrap: wrap; }
+.lista-usuarios li.bloqueado strong { color: #999; text-decoration: line-through; }
+.acoes-usuario { display: flex; gap: 6px; flex-wrap: wrap; }
+.conta-sync { font-size: .75rem; color: #bfb39a; }
+.conta-sync.erro { color: #ffb4a8; }
+@media (max-width: 700px) { .conta-sync { display: none; } }
 label.chk { flex-direction: row; align-items: center; gap: 8px; display: flex; }
 label.chk input { width: auto; }
 @media (max-width: 700px) { .conta-nome { display: none; } .conta { margin-left: 6px; } }
