@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
+  <!-- quem chegar por http:// vai para o endereço seguro (https): o login nunca trafega sem cadeado -->
+  <script>if (location.protocol === 'http:' && /marmorariashekina\.com\.br$/.test(location.hostname)) location.replace('https://' + location.host + location.pathname + location.search + location.hash);</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Marmoraria Shekina — Sistema</title>
   <meta name="robots" content="noindex, nofollow">
@@ -17,7 +19,7 @@
     });
   </script>
   <!-- versão desta publicação (o publicar.ps1 troca 'dev' pelo número da versão) -->
-  <script>window.VERSAO_SISTEMA = '20261116161310';</script>
+  <script>window.VERSAO_SISTEMA = '20261116161547';</script>
   <!-- tema claro/escuro: aplica antes de desenhar a página (sem piscar). Sem escolha salva, segue o computador -->
   <script>
     (() => {
@@ -28,7 +30,7 @@
     })();
   </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css?v=20261116161310">
+  <link rel="stylesheet" href="styles.css?v=20261116161547">
 </head>
 <body>
   <header class="topbar">
@@ -436,11 +438,11 @@
 
   <script src="vendor/supabase.js"></script>
   <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
-  <script src="avisos.js?v=20261116161310"></script>
-  <script src="acesso.js?v=20261116161310"></script>
-  <script src="catalogo.js?v=20261116161310"></script>
-  <script src="app.js?v=20261116161310"></script>
-  <script src="producao.js?v=20261116161310"></script>
-  <script src="v3d.js?v=20261116161310"></script>
+  <script src="avisos.js?v=20261116161547"></script>
+  <script src="acesso.js?v=20261116161547"></script>
+  <script src="catalogo.js?v=20261116161547"></script>
+  <script src="app.js?v=20261116161547"></script>
+  <script src="producao.js?v=20261116161547"></script>
+  <script src="v3d.js?v=20261116161547"></script>
 </body>
 </html>
