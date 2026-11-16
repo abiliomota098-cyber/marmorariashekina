@@ -920,13 +920,13 @@ function imprimirOrcamento(o) {
       ${o.cliente.endereco ? `<p><strong>Endereço da obra:</strong> ${esc(o.cliente.endereco)}</p>` : ''}
     </div>
     <table>
-      <thead><tr><th class="num">Qtd.</th><th>Descrição</th><th>Material</th><th>Medidas</th><th class="num">Medida total</th><th class="num">Preço unit.</th><th class="num">Total</th></tr></thead>
+      <thead><tr><th class="num">Qtd.</th><th>Descrição</th><th>Material</th><th>Medidas</th><th class="num">Medida total</th><th class="num">Total</th></tr></thead>
       <tbody>${o.itens.map(it => `<tr>
         <td class="num"><strong>${+it.quantidade || 1}</strong></td>
-        <td>${esc(it.descricao)}${it.acabamento ? `<br><small>${/^acabamento/i.test(it.acabamento) ? '' : 'Acabamento '}${esc(acabTexto(it))}: ${fmtNum(+it.acabMetros)} m${+it.acabPreco ? ` × ${fmt(+it.acabPreco)} = ${fmt(valorAcabamento(it))}` : ' (sem custo)'}</small>` : ''}${it.cuba ? `<br><small>${esc(cubaTexto(it))}: ${+it.cubaPreco ? `${+it.cubaQtd > 1 ? `${it.cubaQtd} × ${fmt(+it.cubaPreco)} = ` : ''}${fmt(valorCuba(it))}` : 'sem custo'}</small>` : ''}</td><td>${esc(it.material)}</td>
+        <td>${esc(it.descricao)}${it.acabamento ? `<br><small>${/^acabamento/i.test(it.acabamento) ? '' : 'Acabamento '}${esc(acabTexto(it))}: ${fmtNum(+it.acabMetros)} m${+it.acabPreco ? ' (incluso)' : ' (sem custo)'}</small>` : ''}${it.cuba ? `<br><small>${esc(cubaTexto(it))}${+it.cubaPreco ? ' (incluso)' : ' (sem custo)'}</small>` : ''}</td><td>${esc(it.material)}</td>
         <td>${it.unidade === 'm2' ? `${fmtNum(+it.comprimento)} × ${fmtNum(+it.largura)} m` : it.unidade === 'ml' ? `${fmtNum(+it.comprimento)} m` : ''}</td>
         <td class="num">${it.unidade === 'un' ? `${medidaItem(it)} un` : `${fmtNum(medidaItem(it))} ${it.unidade === 'm2' ? 'm²' : 'm'}`}</td>
-        <td class="num">${fmt(+it.preco)}</td><td class="num">${fmt(totalItem(it))}</td></tr>`).join('')}
+        <td class="num">${fmt(totalItem(it))}</td></tr>`).join('')}
       </tbody>
     </table>
     <div class="pr-total">
