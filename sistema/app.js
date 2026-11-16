@@ -1013,7 +1013,9 @@ function rasterizarMarmore(svgUrl, aplicar) {
 }
 function aplicarFundoMarmore() {
   // fundo geral: mármore claro
-  rasterizarMarmore(marmoreFundo(), url => { document.body.style.backgroundImage = `url("${url}")`; });
+  // o CSS escolhe qual usar conforme o modo claro/escuro
+  rasterizarMarmore(marmoreFundo(), url => { document.body.style.setProperty('--fundo-claro', `url("${url}")`); });
+  rasterizarMarmore(marmoreFundoEscuro(), url => { document.body.style.setProperty('--fundo-escuro', `url("${url}")`); });
   // barra das abas: mármore preto com veios dourados (o mesmo do início), escurecido para leitura
   rasterizarMarmore(marmoreHero().slice(5, -2), url => {
     $('.topbar').style.backgroundImage = `linear-gradient(rgba(0,0,0,.45), rgba(0,0,0,.45)), url("${url}")`;

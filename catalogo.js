@@ -216,6 +216,28 @@ function marmoreFundo() {
   return 'data:image/svg+xml,' + encodeURIComponent(svg);
 }
 
+// fundo geral do modo escuro: mármore grafite com veios discretos (texto continua legível)
+function marmoreFundoEscuro() {
+  const W = 1600, H = 1000;
+  let defs = '', corpo = '', n = 0;
+  const camada = (prim, matriz, ang) => {
+    const id = 'e' + n++;
+    defs += `<filter id='${id}' x='0' y='0' width='100%' height='100%'>${prim}<feColorMatrix type='matrix' values='${matriz}'/></filter>`;
+    corpo += `<rect x='-800' y='-800' width='3200' height='2600' filter='url(#${id})' transform='rotate(${ang} 800 500)'/>`;
+  };
+  const veios = (freq, picos, seed) =>
+    `<feTurbulence type='fractalNoise' baseFrequency='${freq}' numOctaves='5' seed='${seed}'/>` +
+    `<feComponentTransfer><feFuncR type='table' tableValues='${tabelaPicos(picos, 201)}'/></feComponentTransfer>`;
+
+  camada(`<feTurbulence type='fractalNoise' baseFrequency='0.002 0.005' numOctaves='4' seed='5'/>`, matrizCor('#2b2723', 1.4, -0.55), 25);
+  camada(veios('0.0011 0.004', [[.4, .55, .007], [.48, .3, .005], [.56, .5, .007], [.63, .3, .005]], 17), matrizCor('#5a544c', .55, 0), 25);
+  camada(veios('0.0028 0.009', [[.45, .35, .004], [.53, .35, .004]], 29), matrizCor('#46413b', .45, 0), 38);
+  camada(veios('0.0014 0.0045', [[.5, .45, .005]], 41), matrizCor('#a07c1c', .3, 0), 20);
+
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${W}' height='${H}'><defs>${defs}</defs><rect width='${W}' height='${H}' fill='#171512'/>${corpo}</svg>`;
+  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+}
+
 // fundo do início da Apresentação: mármore preto com veios brancos e dourados
 function marmoreHero() {
   const W = 1600, H = 700;

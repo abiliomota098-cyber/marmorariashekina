@@ -26,7 +26,8 @@ body {
   font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
   color: var(--pedra-900);
   background-color: var(--pedra-100);
-  /* mármore claro aplicado pelo app.js (aplicarFundoMarmore) */
+  /* mármore claro/escuro gerado pelo app.js (aplicarFundoMarmore) */
+  background-image: var(--fundo-claro, none);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -515,7 +516,7 @@ label.chk input { width: auto; }
     --azul-claro: #1d2a38;
     --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
   }
-  :root[data-tema="escuro"] body { background-image: none !important; background-color: #141210; }
+  :root[data-tema="escuro"] body { background-image: var(--fundo-escuro, none); background-color: #171512; }
   :root[data-tema="escuro"] .tabs a.ativo { background: #f3f0eb; color: #1d1b19; }
   :root[data-tema="escuro"] #toast { background: #f3f0eb; color: #1d1b19; }
   :root[data-tema="escuro"] .dlg::backdrop { background: rgba(0,0,0,.7); }
