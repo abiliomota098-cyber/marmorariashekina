@@ -80,14 +80,8 @@
         </div>
 
         <h2 class="sec-title" id="servicos">Serviços</h2>
-        <div class="cards">
-          <article class="card"><h3>Cozinhas</h3><p>Bancadas, ilhas, frontões e cubas esculpidas sob medida.</p></article>
-          <article class="card"><h3>Banheiros</h3><p>Lavatórios, nichos, saias e cubas integradas.</p></article>
-          <article class="card"><h3>Escadas e pisos</h3><p>Degraus, espelhos, rodapés e pisos em pedra natural.</p></article>
-          <article class="card"><h3>Soleiras e peitoris</h3><p>Acabamentos para portas e janelas com caimento correto.</p></article>
-          <article class="card"><h3>Áreas gourmet</h3><p>Bancadas externas, churrasqueiras e mesas.</p></article>
-          <article class="card"><h3>Projetos especiais</h3><p>Lareiras, revestimentos de parede e peças personalizadas.</p></article>
-        </div>
+        <p class="sec-sub">Clique em um serviço para ver detalhes, fotos de obras e as pedras mais usadas.</p>
+        <div class="cards" id="servicos-cards"></div>
 
         <h2 class="sec-title" id="materiais">Catálogo de pedras</h2>
         <p class="sec-sub">As pedras mais procuradas para cozinhas, banheiros, escadas e áreas gourmet. Imagens ilustrativas: cada chapa de pedra natural é única — venha conhecer as chapas disponíveis.</p>
@@ -116,7 +110,19 @@
     </section>
   </main>
   <a class="whats-flutuante" data-whatsapp target="_blank" rel="noopener" aria-label="Falar no WhatsApp">WhatsApp</a>
+  <!-- painel de cada serviço e visualizador de fotos das obras -->
+  <dialog id="servico-dialogo" class="servico-dialogo" aria-label="Detalhes do serviço">
+    <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">×</button>
+    <div id="servico-conteudo"></div>
+  </dialog>
+  <dialog id="foto-dialogo" class="foto-dialogo" aria-label="Foto da obra">
+    <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">×</button>
+    <div id="foto-palco" class="foto-palco"><img id="foto-img" alt="Foto da obra"></div>
+    <button type="button" class="foto-nav ant" data-passo="-1" aria-label="Foto anterior">‹</button>
+    <button type="button" class="foto-nav prox" data-passo="1" aria-label="Próxima foto">›</button>
+    <span id="foto-cont" class="foto-cont"></span>
+  </dialog>
   <script src="catalogo.js"></script>
-  <script src="site.js?v=3"></script>
+  <script src="site.js?v=4"></script>
 </body>
 </html>
