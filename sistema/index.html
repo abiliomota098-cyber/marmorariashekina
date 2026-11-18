@@ -19,7 +19,7 @@
     });
   </script>
   <!-- versão desta publicação (o publicar.ps1 troca 'dev' pelo número da versão) -->
-  <script>window.VERSAO_SISTEMA = '20261118170217';</script>
+  <script>window.VERSAO_SISTEMA = '20261118170617';</script>
   <!-- tema claro/escuro: aplica antes de desenhar a página (sem piscar). Sem escolha salva, segue o computador -->
   <script>
     (() => {
@@ -30,7 +30,7 @@
     })();
   </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css?v=20261118170217">
+  <link rel="stylesheet" href="styles.css?v=20261118170617">
 </head>
 <body>
   <header class="topbar">
@@ -74,14 +74,8 @@
         </div>
 
         <h2 class="sec-title">Serviços</h2>
-        <div class="cards">
-          <article class="card"><h3>Cozinhas</h3><p>Bancadas, ilhas, frontões e cubas esculpidas sob medida.</p></article>
-          <article class="card"><h3>Banheiros</h3><p>Lavatórios, nichos, saias e cubas integradas.</p></article>
-          <article class="card"><h3>Escadas e pisos</h3><p>Degraus, espelhos, rodapés e pisos em pedra natural.</p></article>
-          <article class="card"><h3>Soleiras e peitoris</h3><p>Acabamentos para portas e janelas com caimento correto.</p></article>
-          <article class="card"><h3>Áreas gourmet</h3><p>Bancadas externas, churrasqueiras e mesas.</p></article>
-          <article class="card"><h3>Projetos especiais</h3><p>Lareiras, revestimentos de parede e peças personalizadas.</p></article>
-        </div>
+        <p class="sec-sub">Clique em um serviço para ver detalhes, ideias de projetos e as pedras mais usadas.</p>
+        <div class="cards" id="servicos-cards"></div>
 
         <h2 class="sec-title" id="materiais">Catálogo de pedras</h2>
         <p class="sec-sub">As pedras mais procuradas para cozinhas, banheiros, escadas e áreas gourmet. Imagens ilustrativas: cada chapa de pedra natural é única — venha conhecer as chapas disponíveis.</p>
@@ -436,13 +430,30 @@
   </datalist>
   <datalist id="dl-materiais"></datalist>
 
-  <script src="vendor/supabase.js"></script>
-  <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
-  <script src="avisos.js?v=20261118170217"></script>
-  <script src="acesso.js?v=20261118170217"></script>
-  <script src="catalogo.js?v=20261118170217"></script>
-  <script src="app.js?v=20261118170217"></script>
-  <script src="producao.js?v=20261118170217"></script>
-  <script src="v3d.js?v=20261118170217"></script>
+  <!-- painel de cada serviço e visualizador de imagens (servicos.js) -->
+  <dialog id="servico-dialogo" class="servico-dialogo" aria-label="Detalhes do serviço">
+    <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">×</button>
+    <div id="servico-conteudo"></div>
+  </dialog>
+  <dialog id="foto-dialogo" class="foto-dialogo" aria-label="Imagem ampliada">
+    <button type="button" class="dlg-fechar" data-fechar aria-label="Fechar">×</button>
+    <div id="foto-palco" class="foto-palco"><img id="foto-img" alt="Imagem ampliada"></div>
+    <button type="button" class="foto-nav ant" data-passo="-1" aria-label="Imagem anterior">‹</button>
+    <button type="button" class="foto-nav prox" data-passo="1" aria-label="Próxima imagem">›</button>
+    <span id="foto-cont" class="foto-cont"></span>
+  </dialog>
+  <script>
+    // imagens das ideias ficam na raiz do site (../obras); as pedras usam as fotos do sistema
+    window.BASE_OBRAS = /\/sistema\//.test(location.pathname) ? '../obras/' : 'site-publico/obras/';
+    window.IMG_PEDRA = id => `fotos/${id}.jpg`;
+  </script>
+  <script src="vendor/supabase.js"></script>  <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
+  <script src="avisos.js?v=20261118170617"></script>
+  <script src="acesso.js?v=20261118170617"></script>
+  <script src="catalogo.js?v=20261118170617"></script>
+  <script src="app.js?v=20261118170617"></script>
+  <script src="servicos.js?v=20261118170617"></script>
+  <script src="producao.js?v=20261118170617"></script>
+  <script src="v3d.js?v=20261118170617"></script>
 </body>
 </html>
