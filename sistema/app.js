@@ -1045,3 +1045,49 @@ function aplicarFundoMarmore() {
 }
 // espera producao.js carregar antes de mostrar a primeira aba
 document.addEventListener('DOMContentLoaded', mostrarAba);
+
+// ---------- Serviços: galeria de imagens de cada setor ----------
+// As imagens ficam em obras\<setor>\ e o publicar.ps1 gera obras/lista.json na raiz do site.
+const BASE_SETORES = /\/sistema\//.test(location.pathname) ? '../obras/' : 'site-publico/obras/';
+let imagensSetor = {}, setorAberto = { id: '', i: 0 };
+fetch(BASE_SETORES + 'lista.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(l => {
+  imagensSetor = l || {};
+  $$('.card-setor').forEach(c => {
+    const n = (imagensSetor[c.dataset.setor] || []).length;
+    c.querySelector('.card-mais').textContent = n ? `Ver ${n} imagens →` : 'Sem imagens ainda';
+  });
+}).catch(() => {});
+function abrirSetor(card) {
+  const id = card.dataset.setor, fotos = imagensSetor[id] || [];
+  setorAberto.id = id;
+  $('#setor-titulo').textContent = card.querySelector('h3').textContent;
+  $('#setor-galeria').innerHTML = fotos.length
+    ? fotos.map((f, i) => `<button type="button" data-i="${i}"><img src="${BASE_SETORES}${id}/${f}-p.jpg" alt="Imagem ${i + 1}" loading="lazy"></button>`).join('')
+    : '<p class="setor-vazio">Ainda não há imagens deste setor.</p>';
+  $('#dlg-setor').showModal();
+}
+function mostrarImagemSetor(i) {
+  const fotos = imagensSetor[setorAberto.id] || [];
+  if (!fotos.length) return;
+  setorAberto.i = (i + fotos.length) % fotos.length;
+  $('#setor-foto').src = `${BASE_SETORES}${setorAberto.id}/${fotos[setorAberto.i]}.jpg`;
+  $('#setor-cont').textContent = `${setorAberto.i + 1} / ${fotos.length}`;
+}
+$$('.card-setor').forEach(c => {
+  c.addEventListener('click', () => abrirSetor(c));
+  c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirSetor(c); } });
+});
+$('#setor-galeria').addEventListener('click', e => {
+  const b = e.target.closest('[data-i]');
+  if (b) { mostrarImagemSetor(+b.dataset.i); $('#dlg-setor-foto').showModal(); }
+});
+$('#dlg-setor-foto').addEventListener('click', e => {
+  const nav = e.target.closest('.setor-nav');
+  if (nav) return mostrarImagemSetor(setorAberto.i + +nav.dataset.passo);
+  if (e.target === e.currentTarget) e.currentTarget.close();
+});
+document.addEventListener('keydown', e => {
+  if (!$('#dlg-setor-foto').open) return;
+  if (e.key === 'ArrowRight') mostrarImagemSetor(setorAberto.i + 1);
+  if (e.key === 'ArrowLeft') mostrarImagemSetor(setorAberto.i - 1);
+});

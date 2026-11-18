@@ -546,3 +546,24 @@ label.chk input { width: auto; }
   :root[data-tema="escuro"] .atrasado td:first-child { color: #f2a596; }
   :root[data-tema="escuro"] .btn-sm.btn-danger { color: #f2a596; border-color: #6b3a31; }
 }
+
+/* Serviços: cards clicáveis e galeria de cada setor */
+.card-setor { cursor: pointer; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+.card-setor:hover, .card-setor:focus-visible { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(0,0,0,.08), 0 10px 28px rgba(0,0,0,.14); outline: none; }
+.card-setor .card-mais { margin-top: auto; padding-top: 10px; color: var(--ouro); font-weight: 700; font-size: 14px; }
+.setor-aviso { margin: 0 0 12px; font-size: 13px; color: var(--pedra-600); font-style: italic; }
+.setor-galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.setor-galeria button { padding: 0; border: 0; border-radius: 8px; overflow: hidden; cursor: zoom-in; aspect-ratio: 4 / 3; background: var(--pedra-200); }
+.setor-galeria img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
+.setor-galeria button:hover img { transform: scale(1.05); }
+.setor-vazio { color: var(--pedra-600); }
+.setor-zoom { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgba(0,0,0,.92); }
+.setor-zoom::backdrop { background: rgba(0,0,0,.6); }
+.setor-zoom img { position: absolute; inset: 56px 16px 48px; margin: auto; max-width: calc(100% - 32px); max-height: calc(100% - 104px); object-fit: contain; border-radius: 6px; }
+.setor-nav, .setor-fechar { position: absolute; border: 0; border-radius: 50%; background: rgba(255,255,255,.15); color: #fff; cursor: pointer; line-height: 1; }
+.setor-nav { top: 50%; transform: translateY(-50%); width: 48px; height: 48px; font-size: 30px; }
+.setor-nav.ant { left: 12px; } .setor-nav.prox { right: 12px; }
+.setor-fechar { top: 12px; right: 12px; width: 40px; height: 40px; font-size: 24px; }
+.setor-nav:hover, .setor-fechar:hover { background: rgba(255,255,255,.3); }
+.setor-cont { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 14px; color: #ccc; }
+@media (max-width: 560px) { .setor-galeria { grid-template-columns: repeat(2, 1fr); } }

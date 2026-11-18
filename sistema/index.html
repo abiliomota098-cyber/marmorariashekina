@@ -19,7 +19,7 @@
     });
   </script>
   <!-- versão desta publicação (o publicar.ps1 troca 'dev' pelo número da versão) -->
-  <script>window.VERSAO_SISTEMA = '20261118173231';</script>
+  <script>window.VERSAO_SISTEMA = '20261118173456';</script>
   <!-- tema claro/escuro: aplica antes de desenhar a página (sem piscar). Sem escolha salva, segue o computador -->
   <script>
     (() => {
@@ -30,7 +30,7 @@
     })();
   </script>
   <link rel="icon" href="logo-s.png">
-  <link rel="stylesheet" href="styles.css?v=20261118173231">
+  <link rel="stylesheet" href="styles.css?v=20261118173456">
 </head>
 <body>
   <header class="topbar">
@@ -75,12 +75,12 @@
 
         <h2 class="sec-title">Serviços</h2>
         <div class="cards">
-          <article class="card"><h3>Cozinhas</h3><p>Bancadas, ilhas, frontões e cubas esculpidas sob medida.</p></article>
-          <article class="card"><h3>Banheiros</h3><p>Lavatórios, nichos, saias e cubas integradas.</p></article>
-          <article class="card"><h3>Escadas e pisos</h3><p>Degraus, espelhos, rodapés e pisos em pedra natural.</p></article>
-          <article class="card"><h3>Soleiras e peitoris</h3><p>Acabamentos para portas e janelas com caimento correto.</p></article>
-          <article class="card"><h3>Áreas gourmet</h3><p>Bancadas externas, churrasqueiras e mesas.</p></article>
-          <article class="card"><h3>Projetos especiais</h3><p>Lareiras, revestimentos de parede e peças personalizadas.</p></article>
+          <article class="card card-setor" data-setor="cozinhas" tabindex="0" role="button"><h3>Cozinhas</h3><p>Bancadas, ilhas, frontões e cubas esculpidas sob medida.</p><span class="card-mais">Ver imagens →</span></article>
+          <article class="card card-setor" data-setor="banheiros" tabindex="0" role="button"><h3>Banheiros</h3><p>Lavatórios, nichos, saias e cubas integradas.</p><span class="card-mais">Ver imagens →</span></article>
+          <article class="card card-setor" data-setor="escadas" tabindex="0" role="button"><h3>Escadas e pisos</h3><p>Degraus, espelhos, rodapés e pisos em pedra natural.</p><span class="card-mais">Ver imagens →</span></article>
+          <article class="card card-setor" data-setor="soleiras" tabindex="0" role="button"><h3>Soleiras e peitoris</h3><p>Acabamentos para portas e janelas com caimento correto.</p><span class="card-mais">Ver imagens →</span></article>
+          <article class="card card-setor" data-setor="gourmet" tabindex="0" role="button"><h3>Áreas gourmet</h3><p>Bancadas externas, churrasqueiras e mesas.</p><span class="card-mais">Ver imagens →</span></article>
+          <article class="card card-setor" data-setor="especiais" tabindex="0" role="button"><h3>Projetos especiais</h3><p>Lareiras, revestimentos de parede e peças personalizadas.</p><span class="card-mais">Ver imagens →</span></article>
         </div>
 
         <h2 class="sec-title" id="materiais">Catálogo de pedras</h2>
@@ -436,12 +436,27 @@
   </datalist>
   <datalist id="dl-materiais"></datalist>
 
+  <!-- galeria de imagens de cada setor (Serviços) -->
+  <dialog id="dlg-setor" class="dlg dlg-lg">
+    <header class="dlg-head"><h3 id="setor-titulo"></h3><button type="button" class="x" data-fechar>×</button></header>
+    <div class="dlg-body">
+      <p class="setor-aviso">Imagens ilustrativas de projetos — clique numa imagem para ampliar.</p>
+      <div id="setor-galeria" class="setor-galeria"></div>
+    </div>
+  </dialog>
+  <dialog id="dlg-setor-foto" class="setor-zoom">
+    <img id="setor-foto" alt="">
+    <button type="button" class="setor-nav ant" data-passo="-1" aria-label="Anterior">‹</button>
+    <button type="button" class="setor-nav prox" data-passo="1" aria-label="Próxima">›</button>
+    <button type="button" class="setor-fechar" data-fechar aria-label="Fechar">×</button>
+    <span id="setor-cont" class="setor-cont"></span>
+  </dialog>
   <script src="vendor/supabase.js"></script>  <!-- ?v= força o navegador a baixar a versão nova depois de cada publicação -->
-  <script src="avisos.js?v=20261118173231"></script>
-  <script src="acesso.js?v=20261118173231"></script>
-  <script src="catalogo.js?v=20261118173231"></script>
-  <script src="app.js?v=20261118173231"></script>
-  <script src="producao.js?v=20261118173231"></script>
-  <script src="v3d.js?v=20261118173231"></script>
+  <script src="avisos.js?v=20261118173456"></script>
+  <script src="acesso.js?v=20261118173456"></script>
+  <script src="catalogo.js?v=20261118173456"></script>
+  <script src="app.js?v=20261118173456"></script>
+  <script src="producao.js?v=20261118173456"></script>
+  <script src="v3d.js?v=20261118173456"></script>
 </body>
 </html>
