@@ -539,3 +539,4 @@ body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-even
 @keyframes brilho-leve { from { transform: translateX(33%); } to { transform: translateX(-33%); } }
 .pedra-img { background: #ddd; overflow: hidden; }
 .pedra-img img:first-child { object-fit: cover; }
+.serv-aviso { margin: -4px 0 10px; font-size: 13px; color: var(--pedra-600); font-style: italic; }

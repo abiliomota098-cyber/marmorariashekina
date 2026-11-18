@@ -94,7 +94,7 @@ function renderServicos() {
     const capa = `<img class="card-capa" src="${n ? `obras/${s.id}/${obras[s.id][0]}-p.jpg` : `img/pedras/${s.capa}.jpg`}" alt="" loading="lazy">`;
     return `<button type="button" class="card card-servico" data-servico="${s.id}">
       ${capa}<span class="card-corpo"><strong class="card-titulo">${esc(s.t)}</strong><span class="card-txt">${esc(s.p)}</span>
-      <span class="card-mais">${n ? `Ver ${n} foto${n > 1 ? 's' : ''} de obras` : 'Ver detalhes'} →</span></span>
+      <span class="card-mais">${n ? `Ver ${n} ideia${n > 1 ? 's' : ''} de projeto` : 'Ver detalhes'} →</span></span>
     </button>`;
   }).join('');
 }
@@ -106,10 +106,10 @@ function abrirServico(id) {
     <h2>${esc(s.t)}</h2>
     <p class="serv-sub">${esc(s.p)}</p>
     <ul class="serv-itens">${s.itens.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
-    <h3>Nossas obras</h3>
+    <h3>Ideias para o seu projeto</h3>${fotos.length ? '<p class="serv-aviso">Imagens ilustrativas — fazemos o seu projeto sob medida, na pedra que você escolher.</p>' : ''}
     ${fotos.length
-      ? `<div class="galeria">${fotos.map((f, i) => `<button type="button" data-foto="${i}"><img src="obras/${id}/${f}-p.jpg" alt="${esc(s.t)} — obra ${i + 1}" loading="lazy"></button>`).join('')}</div>`
-      : `<p class="serv-vazio">Em breve vamos mostrar aqui fotos das nossas obras de ${esc(s.t.toLowerCase())}. Quer ver trabalhos já feitos? Peça pelo WhatsApp que enviamos.</p>`}
+      ? `<div class="galeria">${fotos.map((f, i) => `<button type="button" data-foto="${i}"><img src="obras/${id}/${f}-p.jpg" alt="${esc(s.t)} — ideia ${i + 1} (imagem ilustrativa)" loading="lazy"></button>`).join('')}</div>`
+      : `<p class="serv-vazio">Em breve vamos mostrar aqui ideias e fotos de projetos de ${esc(s.t.toLowerCase())}. Quer ver trabalhos já feitos? Peça pelo WhatsApp que enviamos.</p>`}
     ${pedras.length ? `<h3>Pedras mais usadas</h3>
     <div class="serv-pedras">${pedras.map(p => `<figure><img src="img/pedras/${p.id}.jpg" alt="" loading="lazy"><figcaption>${esc(p.nome)}</figcaption></figure>`).join('')}</div>
     <button type="button" class="link-catalogo" data-ir-catalogo>Ver o catálogo completo →</button>` : ''}
