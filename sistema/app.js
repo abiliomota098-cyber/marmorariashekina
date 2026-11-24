@@ -36,6 +36,7 @@ const PRECOS_PADRAO = [
   { nome: 'Meia esquadria', unidade: 'ml', preco: 60 },
   { nome: 'Boleado', unidade: 'ml', preco: 90 },
   { nome: 'Acabamento comum', unidade: 'ml', preco: 0 },
+  { nome: 'Acabamento 04', unidade: 'ml', preco: 30 },
   { nome: 'Cuba nº 1', unidade: 'un', preco: 200 },
   { nome: 'Cuba nº 2', unidade: 'un', preco: 240 },
 ];
@@ -103,6 +104,11 @@ function migrar(d) {
   if (!d.acabComum) {
     if (!d.precos.some(p => /^acabamento comum$/i.test(String(p.nome || '').trim()))) d.precos.push({ nome: 'Acabamento comum', unidade: 'ml', preco: 0 });
     d.acabComum = true;
+  }
+  // acabamento 04 (R$ 30 o metro linear) entra uma única vez nas tabelas já salvas
+  if (!d.acab04) {
+    if (!d.precos.some(p => /^acabamento\s*0?4$/i.test(String(p.nome || '').trim()))) d.precos.push({ nome: 'Acabamento 04', unidade: 'ml', preco: 30 });
+    d.acab04 = true;
   }
   // cubas nº 1 e nº 2 entram uma única vez nas tabelas já salvas
   if (!d.cubas) {
