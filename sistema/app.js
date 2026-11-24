@@ -915,13 +915,17 @@ function totaisImpressao(o, total) {
   const comDesc = vendido ? total : avista ? totalAvista(o) : totalOrc(o);
   if (round2(comDesc) >= bruto) return `<p>Valor total: <strong>${fmt(total)}</strong></p>`;
   const linhas = [`<p class="pr-bruto">Valor total sem desconto: <strong>${fmt(bruto)}</strong></p>`];
-  if (+o.desconto) linhas.push(`<p class="pr-desc">Desconto: − ${fmt(o.desconto)}</p>`);
+  // só a porcentagem descontada (sem o valor em R$ do desconto)
+  const pct = (de, para) => fmtPct(Math.round((1 - para / de) * 1000) / 10);
   if (avista) {
-    if (+o.desconto) linhas.push(`<p>Valor com desconto: <strong>${fmt(totalOrc(o))}</strong></p>`);
-    linhas.push(`<p class="pr-desc">Desconto à vista (${fmtPct(pctAvista(o))}): − ${fmt(round2(totalOrc(o) - totalAvista(o)))}</p>`);
+    if (+o.desconto) {
+      linhas.push(`<p class="pr-desc">Desconto: ${pct(bruto, totalOrc(o))}</p>`);
+      linhas.push(`<p>Valor com desconto: <strong>${fmt(totalOrc(o))}</strong></p>`);
+    }
+    linhas.push(`<p class="pr-desc">Desconto à vista: ${fmtPct(pctAvista(o))}</p>`);
     linhas.push(`<p class="pr-avista">Valor com desconto à vista: <strong>${fmt(comDesc)}</strong></p>`);
   } else {
-    if (vendido && !+o.desconto) linhas.push(`<p class="pr-desc">Desconto: − ${fmt(round2(bruto - comDesc))}</p>`);
+    linhas.push(`<p class="pr-desc">Desconto: ${pct(bruto, comDesc)}</p>`);
     linhas.push(`<p class="pr-avista">Valor total com desconto: <strong>${fmt(comDesc)}</strong></p>`);
   }
   return linhas.join('');
