@@ -907,6 +907,25 @@ $('#btn-cancelar-venda').addEventListener('click', async () => {
 // ============================================================
 //  IMPRESSÃO DO ORÇAMENTO
 // ============================================================
+// quadro de totais: valor sem desconto e valor com desconto (desconto em R$ e/ou à vista)
+function totaisImpressao(o, total) {
+  const bruto = subtotal(o);
+  const vendido = o.status === 'vendido';
+  const avista = !vendido && pctAvista(o) > 0;
+  const comDesc = vendido ? total : avista ? totalAvista(o) : totalOrc(o);
+  if (round2(comDesc) >= bruto) return `<p>Valor total: <strong>${fmt(total)}</strong></p>`;
+  const linhas = [`<p class="pr-bruto">Valor total sem desconto: <strong>${fmt(bruto)}</strong></p>`];
+  if (+o.desconto) linhas.push(`<p class="pr-desc">Desconto: − ${fmt(o.desconto)}</p>`);
+  if (avista) {
+    if (+o.desconto) linhas.push(`<p>Valor com desconto: <strong>${fmt(totalOrc(o))}</strong></p>`);
+    linhas.push(`<p class="pr-desc">Desconto à vista (${fmtPct(pctAvista(o))}): − ${fmt(round2(totalOrc(o) - totalAvista(o)))}</p>`);
+    linhas.push(`<p class="pr-avista">Valor com desconto à vista: <strong>${fmt(comDesc)}</strong></p>`);
+  } else {
+    if (vendido && !+o.desconto) linhas.push(`<p class="pr-desc">Desconto: − ${fmt(round2(bruto - comDesc))}</p>`);
+    linhas.push(`<p class="pr-avista">Valor total com desconto: <strong>${fmt(comDesc)}</strong></p>`);
+  }
+  return linhas.join('');
+}
 function imprimirOrcamento(o) {
   const total = o.status === 'vendido' ? o.venda.valorTotal : totalOrc(o);
   $('#print-area').innerHTML = `
@@ -930,9 +949,7 @@ function imprimirOrcamento(o) {
       </tbody>
     </table>
     <div class="pr-total">
-      ${o.desconto ? `<p>Subtotal: ${fmt(subtotal(o))}<br>Desconto: − ${fmt(o.desconto)}</p>` : ''}
-      <p>Total: <strong>${fmt(total)}</strong></p>
-      ${o.status !== 'vendido' && pctAvista(o) ? `<p class="pr-avista">À vista (${fmtPct(pctAvista(o))} de desconto): <strong>${fmt(totalAvista(o))}</strong></p>` : ''}
+      ${totaisImpressao(o, total)}
     </div>
     ${o.prazoEntrega ? `<p><strong>Prazo de entrega:</strong> ${esc(o.prazoEntrega)}</p>` : ''}
     ${o.observacoes ? `<p><strong>Observações:</strong> ${esc(o.observacoes)}</p>` : ''}
